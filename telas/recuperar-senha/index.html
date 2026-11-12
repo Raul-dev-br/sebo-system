@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- ============================================================
+       Sebo das Andorinhas — Recuperação de senha
+       Tela mobile-first (referência: frame 128:832 do Figma).
+       HTML + CSS + JavaScript puro, sem frameworks.
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <!-- viewport: garante que o layout mobile seja usado em celulares reais -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F9F6F0">
+  <meta name="description" content="Recupere a sua conta do Sebo das Andorinhas através do seu email.">
+  <title>Recuperar senha — Sebo das Andorinhas</title>
+
+  <!-- Fontes do guia de design: Figtree (títulos) e DM Sans (textos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos da tela -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JavaScript carregado depois do HTML (defer) para os elementos já existirem -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <!-- Container principal da tela.
+       No mobile ocupa a tela toda; em telas maiores vira um card centralizado. -->
+  <main class="auth">
+
+    <!-- ================= ILUSTRAÇÃO DE FUNDO ================= -->
+    <!-- A imagem vem de assets/ e é a mesma usada no frame 128:832.
+         O link de voltar fica sobreposto no canto superior esquerdo. -->
+    <section class="illustration" aria-label="Ilustração de uma jovem cercada por livros e andorinhas">
+      <img
+        class="illustration__img"
+        src="../../assets/bg-esqueceu.png"
+        alt="Ilustração de uma jovem de braços abertos, em pé sobre livros, cercada por plantas, nuvens e andorinhas"
+        width="1024"
+        height="1536"
+      >
+
+      <!-- Seta de voltar: leva de volta para a tela de login -->
+      <a class="back-link" href="../login/index.html" aria-label="Voltar para a tela de login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M19 12H5"></path>
+          <path d="M11 18l-6-6 6-6"></path>
+        </svg>
+      </a>
+    </section>
+
+    <!-- ================= CARD / PAINEL DO FORMULÁRIO ================= -->
+    <!-- O painel sobe por cima da ilustração com um topo levemente curvado,
+         reproduzindo o recorte do card (Rectangle 21) no Figma. -->
+    <section class="panel" aria-labelledby="titulo-recuperar">
+      <div class="panel__content">
+
+        <!-- Cabeçalho: título e subtítulo com os textos exatos do guia -->
+        <header class="panel__header">
+          <h1 id="titulo-recuperar">Esqueceu a sua senha?</h1>
+          <p class="subtitle">Recupere a sua conta através do seu melhor email!</p>
+        </header>
+
+        <!-- Formulário de recuperação.
+             "novalidate" desliga as mensagens nativas do navegador:
+             nós mesmos validamos e mostramos o feedback inline. -->
+        <form class="recover-form" id="recover-form" novalidate>
+
+          <!-- Campo de email com label real (acessibilidade) -->
+          <div class="field-group">
+            <label for="email">Email</label>
+
+            <!-- Casca do input: desenha a borda, o ícone e o fundo branco -->
+            <div class="input-shell" id="email-shell">
+              <!-- Ícone de envelope em SVG inline (sem CDN de ícones) -->
+              <svg class="input-shell__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                   aria-hidden="true" focusable="false">
+                <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"></rect>
+                <path d="M3.5 6.5l8.5 6 8.5-6"></path>
+              </svg>
+
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="fulanodetal@gmail.com"
+                autocomplete="email"
+                inputmode="email"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-describedby="email-feedback"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Mensagem inline de sucesso ou de erro.
+               Fica escondida até o JavaScript precisar dela.
+               role="status" + aria-live fazem leitores de tela anunciarem o texto. -->
+          <p class="feedback" id="email-feedback" role="status" aria-live="polite" hidden>
+            <!-- Ícone de check: aparece somente no estado de sucesso -->
+            <svg class="feedback__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+              <circle cx="10" cy="10" r="8.3"></circle>
+              <path d="M6.4 10.2l2.5 2.5 4.7-5.2"></path>
+            </svg>
+            <span class="feedback__text"></span>
+          </p>
+
+          <!-- Botão principal: envia o link de recuperação -->
+          <button class="btn btn--primary" type="submit" id="submit-button">Enviar</button>
+
+          <!-- Botão secundário: segue para a vitrine sem login -->
+          <a class="btn btn--secondary" href="../vitrine/index.html">Continuar como Visitante</a>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

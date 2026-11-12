@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Painel administrativo do Sebo das Andorinhas: métricas do acervo, últimos livros cadastrados, pesquisa rápida e gráfico por categoria." />
+  <title>Admin · Sebo das Andorinhas</title>
+
+  <!-- Fontes do guia de design: Figtree (títulos), DM Sans (textos) e Poppins (apoio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&family=Poppins:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- CSS da tela -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Link de salto: aparece ao usar Tab e leva direto ao conteúdo principal -->
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <div class="app">
+
+    <!-- ============================================================
+         SIDEBAR
+         No desktop fica fixa e expandida (264px).
+         No tablet vira uma coluna estreita só com ícones (72px).
+         No mobile fica escondida e desliza ao clicar no botão de menu.
+         ============================================================ -->
+    <aside class="sidebar" id="sidebar" aria-label="Menu do painel">
+      <!-- Botão de fechar, visível apenas no mobile -->
+      <button class="sidebar__close" id="sidebarClose" type="button" aria-label="Fechar menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <!-- Logo: desenho de livro aberto com folhas, feito em SVG inline -->
+      <div class="brand">
+        <svg class="brand__icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" focusable="false">
+          <!-- folhas saindo do centro do livro -->
+          <path d="M24 18c-3.6-4.5-6.8-5.6-10-5 1.2 4.4 4 7 10 7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          <path d="M24 18c3.6-4.5 6.8-5.6 10-5-1.2 4.4-4 7-10 7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          <path d="M24 13.5c-1.5-3.2-1-6 .8-8 2 2.3 2.3 5 .7 8" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          <!-- livro aberto (páginas cheias) -->
+          <path d="M8 30.5c5.5-3.1 10.6-3.1 16 0 5.4-3.1 10.5-3.1 16 0V39c-5.5-3.1-10.6-3.1-16 0-5.4-3.1-10.5-3.1-16 0v-8.5Z" fill="currentColor" />
+        </svg>
+        <span class="brand__text">
+          <span class="brand__line">Sebo das</span>
+          <span class="brand__line brand__line--big">Andorinhas</span>
+        </span>
+      </div>
+
+      <!-- Navegação principal -->
+      <nav class="nav" aria-label="Menu principal">
+        <!-- Dashboard está ativo: aria-current avisa o leitor de tela -->
+        <a class="nav__item is-active" href="#" aria-current="page" title="Dashboard">
+          <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3.5" y="3.5" width="7" height="7" rx="1.6" fill="currentColor" />
+            <rect x="13.5" y="3.5" width="7" height="7" rx="1.6" fill="currentColor" />
+            <rect x="3.5" y="13.5" width="7" height="7" rx="1.6" fill="currentColor" />
+            <rect x="13.5" y="13.5" width="7" height="7" rx="1.6" fill="currentColor" />
+          </svg>
+          <span class="nav__label">Dashboard</span>
+        </a>
+
+        <a class="nav__item" href="#" title="Livros">
+          <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3.5 5.2c2.8-1.4 5.6-1.4 8.5 0 2.9-1.4 5.7-1.4 8.5 0v13.6c-2.8-1.4-5.6-1.4-8.5 0-2.9-1.4-5.7-1.4-8.5 0V5.2Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+            <path d="M12 5.2v13.6" fill="none" stroke="currentColor" stroke-width="1.7" />
+          </svg>
+          <span class="nav__label">Livros</span>
+        </a>
+
+        <a class="nav__item" href="#" title="Categorias">
+          <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12.7 3.5H20v7.3l-8.9 8.9a2 2 0 0 1-2.8 0L3.5 15a2 2 0 0 1 0-2.8l9.2-8.7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+            <circle cx="16.6" cy="7.4" r="1.4" fill="currentColor" />
+          </svg>
+          <span class="nav__label">Categorias</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Fundo escurecido que fecha a sidebar no mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- ============================================================
+         COLUNA PRINCIPAL (header + conteúdo)
+         ============================================================ -->
+    <div class="main">
+
+      <!-- HEADER rosa com saudação e dados do usuário -->
+      <header class="topbar">
+        <!-- Botão hambúrguer: só aparece no mobile -->
+        <button class="menu-toggle" id="menuToggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <h1 class="topbar__greeting">
+          Bom dia, Antônio! <span class="topbar__wave" aria-hidden="true">👋</span>
+        </h1>
+
+        <div class="topbar__user">
+          <!-- Avatar provisório com as iniciais (o guia permite um placeholder) -->
+          <div class="avatar" aria-hidden="true">AS</div>
+          <div class="topbar__user-info">
+            <span class="topbar__name">Antônio Sales</span>
+            <span class="topbar__role">Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTEÚDO DO DASHBOARD -->
+      <main class="content" id="conteudo">
+
+        <div class="dashboard">
+
+          <!-- ===== CARDS DE MÉTRICAS ===== -->
+          <section class="metrics" aria-label="Métricas do acervo">
+
+            <article class="metric metric--clients">
+              <div class="metric__body">
+                <h2 class="metric__label">Total de Clientes</h2>
+                <p class="metric__value">1.348</p>
+              </div>
+              <span class="metric__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                  <circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.8" />
+                  <path d="M3.5 19.2c.6-3.3 2.8-5.1 5.5-5.1s4.9 1.8 5.5 5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  <path d="M15.6 5.3a3 3 0 0 1 0 5.4M17.2 14.3c2 .6 3.2 2.2 3.5 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+            </article>
+
+            <article class="metric metric--books">
+              <div class="metric__body">
+                <h2 class="metric__label">Total de Livros</h2>
+                <p class="metric__value">6304</p>
+              </div>
+              <span class="metric__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                  <path d="M12 6.2C9.7 4.8 6.7 4.8 4 6v13c2.7-1.2 5.7-1.2 8 0 2.3-1.2 5.3-1.2 8 0V6c-2.7-1.2-5.7-1.2-8 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                  <path d="M12 6.2v12.9" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+              </span>
+            </article>
+
+            <article class="metric metric--available">
+              <div class="metric__body">
+                <h2 class="metric__label">Total Disponível</h2>
+                <p class="metric__value">5579</p>
+              </div>
+              <span class="metric__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                  <path d="M10.5 6.2C8.4 5 5.7 5 3.4 6v11.7c2.3-1 5-1 7.1.2 2.1-1.2 4.8-1.2 7.1-.2V6c-2.3-1-5-1-7.1.2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                  <path d="M10.5 6.2v11.7" stroke="currentColor" stroke-width="1.7" />
+                  <path d="M15.5 12.2l2 2 3.7-4.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </article>
+
+          </section>
+
+          <!-- ===== GRÁFICO (no desktop fica na coluna direita) ===== -->
+          <aside class="chart-card" aria-labelledby="chartTitle">
+            <h2 class="chart-card__title" id="chartTitle">Porcentagem por Categoria</h2>
+
+            <div class="chart">
+              <!-- O donut é montado pelo JS com fatias SVG clicáveis -->
+              <div class="donut" id="donut">
+                <svg class="donut__svg" id="donutSvg" viewBox="0 0 200 200" role="group" aria-label="Gráfico de porcentagem por categoria"></svg>
+                <div class="donut__center">
+                  <span class="donut__value" id="donutValue" aria-live="polite">88,4%</span>
+                  <span class="donut__label" id="donutLabel"></span>
+                </div>
+              </div>
+
+              <!-- A legenda também é gerada pelo JS (botões acessíveis) -->
+              <ul class="legend" id="legend" aria-label="Categorias do gráfico"></ul>
+            </div>
+          </aside>
+
+          <!-- ===== ÚLTIMOS LIVROS CADASTRADOS ===== -->
+          <section class="latest" aria-labelledby="latestTitle">
+            <h2 class="section-title" id="latestTitle">Últimos Livros Cadastrados</h2>
+
+            <div class="latest__card">
+              <div class="latest__grid">
+                <!-- Os 4 livros são inseridos pelo JS -->
+                <div class="latest__books" id="latestBooks"></div>
+
+                <!-- Pequena seta decorativa/navegação para a pesquisa rápida -->
+                <button class="latest__more" id="latestMore" type="button" aria-label="Ir para a pesquisa rápida" title="Ver mais livros">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M9 5.5l7 6.5-7 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+
+                <div class="latest__actions">
+                  <button class="action action--new" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span>Novo Livro</span>
+                  </button>
+
+                  <button class="action action--clients" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <circle cx="9" cy="8.5" r="3" stroke="currentColor" stroke-width="1.8" />
+                      <path d="M3.8 19c.6-3.1 2.7-4.8 5.2-4.8s4.6 1.7 5.2 4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                      <path d="M15.4 6a2.9 2.9 0 0 1 0 5.1M16.9 14.5c1.8.5 3 2 3.3 4.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                    <span>Ver Clientes</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== PESQUISA RÁPIDA ===== -->
+          <section class="quick" aria-labelledby="quickTitle">
+            <div class="quick__head">
+              <h2 class="section-title" id="quickTitle">Pesquisa Rápida</h2>
+
+              <div class="quick__tools">
+                <!-- Label real escondida visualmente para manter acessibilidade -->
+                <div class="search">
+                  <label class="sr-only" for="buscaLivro">Procurar Livro...</label>
+                  <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="10.5" cy="10.5" r="6.2" fill="none" stroke="currentColor" stroke-width="1.8" />
+                    <path d="M15.2 15.2L20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  </svg>
+                  <input
+                    class="search__input"
+                    id="buscaLivro"
+                    type="search"
+                    placeholder="Procurar Livro..."
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                </div>
+
+                <button class="icon-button" id="sortButton" type="button" aria-pressed="false" aria-label="Ordenar livros de A a Z" title="Ordenar de A a Z">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 6h14M5 12h10M5 18h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    <circle cx="18" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="quick__card">
+              <!-- Grade de 10 livros renderizada pelo JS -->
+              <div class="book-grid" id="quickBooks"></div>
+
+              <!-- Mensagem exibida quando a busca não encontra nada -->
+              <p class="empty-state" id="emptyState" hidden>Nenhum livro encontrado.</p>
+
+              <!-- Paginação -->
+              <nav class="pagination" aria-label="Paginação do catálogo">
+                <p class="pagination__info" id="paginationInfo" aria-live="polite">Amostra 10 de 234</p>
+                <div class="pagination__buttons">
+                  <button class="page-button" id="pagePrev" type="button" aria-label="Página anterior" disabled>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                  <button class="page-button" id="pageNext" type="button" aria-label="Próxima página">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </nav>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- JS da tela (dados mockados, filtro, gráfico e menu) -->
+  <script src="script.js"></script>
+</body>
+</html>

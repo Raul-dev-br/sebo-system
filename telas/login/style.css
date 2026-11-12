@@ -1,0 +1,581 @@
+/* ==========================================================================
+   SEBO DAS ANDORINHAS — Tela de Login
+   --------------------------------------------------------------------------
+   HTML + CSS puro, mobile-first.
+   As medidas base seguem o frame de 390 × 844 px do Figma.
+   A partir de 768px a tela vira duas colunas: ilustração + formulário.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TOKENS DE DESIGN
+   Custom properties (variáveis CSS) definidas uma vez no :root.
+   Assim a paleta e as fontes podem ser reutilizadas em qualquer regra.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Paleta oficial do guia de design */
+  --cream-bg: #FAF7F2;
+  --cream-bg-alt: #F9F6F0;
+  --white: #FFFFFF;
+  --wine: #AE525B;
+  --wine-light: #DD797E;
+  --rose-soft: #EEC4C3;
+  --rose-pale: #FFE0E5;
+  --green-soft: #D8FEE4;
+  --green-text: #7C9A73;
+  --dark: #1A0001;
+  --gray-text: #4D4D4D;
+  --border: #D8D8D8;
+  --surface: #F4F4F4;
+  --amber-soft: #FFF4E0;
+
+  /* Fontes */
+  --font-title: "Figtree", "Trebuchet MS", sans-serif;
+  --font-body: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --font-ui: "Poppins", "Segoe UI", system-ui, sans-serif;
+
+  /* Medidas compartilhadas */
+  --space: 18px;          /* margem lateral do conteúdo no mobile */
+  --input-height: 46px;
+  --btn-height: 48px;
+  --radius-field: 16px;   /* inputs e botões têm cantos bem arredondados */
+  --dome: 34px;           /* altura da curva do card sobre a ilustração */
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET LEVE
+   Remove margens padrão e padroniza o cálculo de tamanho.
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--cream-bg);
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* Foco visível para quem navega por teclado (acessibilidade) */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--wine);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   3. ESTRUTURA PRINCIPAL (mobile-first)
+   .login-shell é uma coluna: ilustração em cima, card logo abaixo.
+   -------------------------------------------------------------------------- */
+.login-shell {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100svh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream-bg);
+}
+
+/* --------------------------------------------------------------------------
+   4. ILUSTRAÇÃO
+   A proporção 390/406 reproduz o recorte do Figma:
+   a imagem visível termina exatamente onde começa a curva do card.
+   -------------------------------------------------------------------------- */
+.scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 390 / 406;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--cream-bg);
+}
+
+.scene__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 72.5% vertical mantém o rosto da leitora na posição da referência */
+  object-position: 50% 72.5%;
+}
+
+/* --------------------------------------------------------------------------
+   5. BOTÃO VOLTAR
+   Círculo vinho de 50px, fixado no canto superior esquerdo da tela.
+   -------------------------------------------------------------------------- */
+.back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 5;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--wine);
+  color: var(--white);
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(26, 0, 1, 0.18);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.back:hover {
+  background: #9C454E; /* vinho um pouco mais escuro no hover */
+  transform: translateY(-1px);
+}
+
+.back:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.back svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   6. CARD
+   Sobe 34px sobre a ilustração (margin-top negativo).
+   O border-radius em "domo" cria a curva característica do Figma.
+   -------------------------------------------------------------------------- */
+.card {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  margin-top: calc(var(--dome) * -1);
+  padding: var(--dome) var(--space) 23px;
+  background: var(--cream-bg);
+  border-radius: 50% 50% 0 0 / var(--dome) var(--dome) 0 0;
+}
+
+/* Limita a largura do conteúdo para não esticar demais em tablets */
+.card__inner {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   7. CABEÇALHO (H1 + subtítulo)
+   -------------------------------------------------------------------------- */
+.card__header {
+  text-align: center;
+}
+
+.card__title {
+  margin: 0 0 4px;
+  font-family: var(--font-title);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 34px;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+}
+
+.card__subtitle {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22.4px;
+  color: var(--gray-text);
+}
+
+/* --------------------------------------------------------------------------
+   8. FORMULÁRIO E CAMPOS
+   -------------------------------------------------------------------------- */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Espaço entre o campo de e-mail e o de senha */
+.field + .field {
+  margin-top: 4px;
+}
+
+.field__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--dark);
+}
+
+/* "Caixa" que desenha a borda e o fundo do input.
+   O <input> em si fica transparente por dentro. */
+.input-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--input-height);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-field);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+/* Quando o input interno recebe foco, a caixa inteira se destaca */
+.input-shell:focus-within {
+  border-color: var(--wine);
+  box-shadow: 0 0 0 3px rgba(174, 82, 91, 0.14);
+}
+
+/* Estado de erro */
+.input-shell.is-invalid {
+  border-color: var(--wine);
+  background: #FFF7F7;
+}
+
+.input {
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--dark);
+}
+
+/* O contorno de foco é desenhado pela .input-shell */
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: #757575;
+  opacity: 1;
+}
+
+/* Campo com ícone à esquerda (e-mail) */
+.input-shell--icon .input {
+  padding-left: 47px;
+  padding-right: 12px;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: #6F6F6F;
+  pointer-events: none; /* o clique "atravessa" o ícone e foca o input */
+}
+
+.input-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Campo de senha: espaço à direita para o botão do olho */
+.input-shell--password .input {
+  padding-right: 50px;
+}
+
+/* Botão do olho */
+.toggle-senha {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #7A7A7A;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.toggle-senha:hover {
+  background: var(--surface);
+  color: var(--wine);
+}
+
+.toggle-senha svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Começa mostrando o olho fechado; o JS troca a classe .is-visible */
+.toggle-senha .icon-eye {
+  display: none;
+}
+
+.toggle-senha.is-visible .icon-eye-off {
+  display: none;
+}
+
+.toggle-senha.is-visible .icon-eye {
+  display: block;
+}
+
+/* Mensagens de erro */
+.field__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--wine);
+}
+
+.field__error[hidden] {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   9. LINK "ESQUECEU SENHA?"
+   -------------------------------------------------------------------------- */
+.form__forgot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.form__forgot a {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 14px;
+  color: var(--gray-text);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.form__forgot a:hover {
+  color: var(--wine);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   10. BOTÕES
+   -------------------------------------------------------------------------- */
+.btn {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: var(--btn-height);
+  border: 0;
+  border-radius: var(--radius-field);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.99);
+}
+
+.btn--primary {
+  margin-top: 18px;
+  background: var(--wine);
+  color: var(--white);
+}
+
+.btn--primary:hover {
+  background: #9C454E;
+  box-shadow: 0 6px 16px rgba(174, 82, 91, 0.24);
+}
+
+.btn--secondary {
+  margin-top: 12px;
+  background: var(--rose-soft);
+  color: var(--dark);
+}
+
+.btn--secondary:hover {
+  background: #E6B3B2;
+}
+
+/* --------------------------------------------------------------------------
+   11. RODAPÉ DO CARD
+   -------------------------------------------------------------------------- */
+.card__footer {
+  margin: 18px 0 0;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--gray-text);
+}
+
+.card__footer span {
+  margin-right: 2px;
+}
+
+.card__footer a {
+  color: var(--dark);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.card__footer a:hover {
+  color: var(--wine);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   12. AUTOFILL DO CHROME
+   Evita o fundo amarelado que o navegador coloca em campos preenchidos.
+   -------------------------------------------------------------------------- */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
+  -webkit-text-fill-color: var(--dark);
+  caret-color: var(--dark);
+}
+
+/* --------------------------------------------------------------------------
+   13. TABLET / DESKTOP (a partir de 768px)
+   A tela deixa de ser uma coluna e passa a ser um grid de duas colunas:
+   ilustração à esquerda e formulário à direita.
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  body {
+    display: block;
+    background: var(--cream-bg);
+  }
+
+  .login-shell {
+    display: grid;
+    grid-template-columns: minmax(300px, 45%) 1fr;
+    max-width: none;
+    min-height: 100svh;
+    margin: 0;
+  }
+
+  /* A ilustração ocupa toda a altura da tela e fica "presa" ao rolar */
+  .scene {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    aspect-ratio: auto;
+  }
+
+  .scene__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-position: 50% 42%;
+  }
+
+  .back {
+    top: 28px;
+    left: 28px;
+  }
+
+  /* O card vira o painel direito: sem sobreposição e sem cantos arredondados */
+  .card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100svh;
+    margin-top: 0;
+    padding: clamp(40px, 6vh, 72px) clamp(32px, 5vw, 88px);
+    border-radius: 0;
+  }
+
+  .card__inner {
+    max-width: 400px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. DESKTOP GRANDE (a partir de 1200px)
+   A ilustração ganha mais espaço e o formulário fica mais respirado.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1200px) {
+  .login-shell {
+    grid-template-columns: minmax(480px, 54%) 1fr;
+  }
+
+  .scene__img {
+    object-position: 50% 38%;
+  }
+
+  .card {
+    padding-inline: clamp(56px, 7vw, 120px);
+  }
+
+  .card__inner {
+    max-width: 420px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. TELAS MOBILE MAIS BAIXAS (ex.: 360 × 800)
+   Compacta um pouco os espaçamentos para o rodapé caber sem rolagem.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) and (max-height: 820px) {
+  .card {
+    padding-top: 26px;
+  }
+
+  .card__footer {
+    margin-top: 12px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. PREFERÊNCIA POR MENOS MOVIMENTO
+   Respeita quem desativou animações no sistema operacional.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

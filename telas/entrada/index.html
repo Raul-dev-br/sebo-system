@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#FAF7F2">
+  <meta name="description" content="Bem-vindo ao Sebo das Andorinhas, seu sebo de livros usados.">
+  <title>Sebo das Andorinhas — Entrada</title>
+
+  <!-- Fontes do projeto: Figtree para títulos e DM Sans para textos/botões -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos da tela de entrada -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!--
+    .tela é o contêiner principal.
+    No mobile ele organiza tudo em coluna: ilustração em cima, texto e botões embaixo.
+  -->
+  <main class="tela">
+
+    <!--
+      Ilustração de fundo da tela.
+      A imagem já vem com o fundo creme, então ela se funde com o fundo da página.
+    -->
+    <figure class="hero">
+      <img
+        class="hero__imagem"
+        src="../../assets/bg-entrada.png"
+        alt="Ilustração de uma mulher lendo um livro sentada sobre uma pilha de livros, com andorinhas e plantas ao redor."
+        width="1024"
+        height="1536"
+        fetchpriority="high"
+      >
+    </figure>
+
+    <!-- Bloco de texto e ações da tela -->
+    <section class="conteudo" aria-labelledby="titulo-entrada">
+      <!-- Título em duas linhas, exatamente como no Figma -->
+      <h1 class="conteudo__titulo" id="titulo-entrada">
+        <span class="conteudo__linha">Bem Vindo ao</span>
+        <span class="conteudo__linha">Sebo das Andorinhas!</span>
+      </h1>
+
+      <!-- Botões empilhados; os links já funcionam mesmo sem JavaScript -->
+      <div class="acoes">
+        <a
+          class="botao botao--primario"
+          href="../login/index.html"
+          data-destino="../login/index.html"
+        >Entre com sua conta</a>
+
+        <a
+          class="botao botao--secundario"
+          href="../vitrine/index.html"
+          data-destino="../vitrine/index.html"
+        >Continuar como Visitante</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Comportamento da tela (transição suave antes de navegar) -->
+  <script src="script.js"></script>
+</body>
+</html>

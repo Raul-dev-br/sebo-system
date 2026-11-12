@@ -1,0 +1,968 @@
+/* ==========================================================================
+   SEBO DAS ANDORINHAS — TELA DE DETALHES DO LIVRO
+   --------------------------------------------------------------------------
+   Estrutura do arquivo:
+   1. Variáveis de design (cores, fontes e medidas)
+   2. Reset e estilos base
+   3. Acessibilidade (foco, skip link, texto só para leitores de tela)
+   4. Hero com capa, botão voltar e favorito
+   5. Cabeçalho do livro (título, autor e badges)
+   6. Descrição, preço e botão principal
+   7. Ficha técnica (specs)
+   8. Aviso de loja física
+   9. Seções e acordeões
+   10. CTA fixo do mobile
+   11. Responsivo (768px, 1024px e 1440px)
+   12. Preferência por menos movimento
+   ========================================================================== */
+
+/* ==========================================================================
+   1. VARIÁVEIS DE DESIGN
+   As custom properties ficam no :root para serem usadas em todo o documento.
+   Os tokens seguem o guia-de-design.md do projeto.
+   ========================================================================== */
+:root {
+  /* Cores base */
+  --cream-bg: #faf7f2;
+  --cream-bg-alt: #f9f6f0;
+  --white: #ffffff;
+  --wine: #ae525b;
+  --wine-light: #dd797e;
+  --rose-soft: #eec4c3;
+  --rose-pale: #ffe0e5;
+  --green-soft: #d8fee4;
+  --green-text: #7c9a73;
+  --dark: #1a0001;
+  --gray-text: #4d4d4d;
+  --border: #d8d8d8;
+  --surface: #f4f4f4;
+  --amber-soft: #fff4e0;
+
+  /* Fontes: cada família tem uma função no layout */
+  --font-title: "Figtree", "Segoe UI", sans-serif;
+  --font-body: "DM Sans", "Segoe UI", sans-serif;
+  --font-ui: "Poppins", "Segoe UI", sans-serif;
+
+  /* Medidas reutilizadas */
+  --gutter: 20px;
+  --radius-card: 14px;
+  --radius-button: 12px;
+  --shadow-soft: 0 8px 24px rgba(26, 0, 1, 0.06);
+}
+
+/* ==========================================================================
+   2. RESET E ESTILOS BASE
+   ========================================================================== */
+
+/* O box-sizing border-box faz padding e borda entrarem na largura total */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Evita que o navegador aumente a fonte sozinho no mobile */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Fundo branco e cor de texto padrão do guia */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--white);
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Imagens nunca ultrapassam o container e não deixam espaço abaixo */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Links e botões herdam a fonte do contexto */
+a,
+button {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* Botões não têm estilo nativo para podermos desenhar os nossos */
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Títulos usam margin zero e são controlados pelos componentes */
+h1,
+h2,
+p,
+ul,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* ==========================================================================
+   3. ACESSIBILIDADE
+   ========================================================================== */
+
+/* Foco visível e consistente para quem navega por teclado */
+:focus-visible {
+  outline: 3px solid var(--wine);
+  outline-offset: 3px;
+}
+
+/* No hero verde, o contorno branco tem mais contraste com o fundo */
+.hero :focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 7px rgba(26, 0, 1, 0.35);
+}
+
+/* Link "pular para o conteúdo": escondido até receber foco */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: var(--wine);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Classe utilitária: conteúdo existe para tecnologia assistiva,
+   mas não aparece na tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   4. HERO (faixa verde + capa)
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate; /* cria uma camada própria para os pseudo-elementos */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  padding: 76px var(--gutter) 30px;
+  border-radius: 0 0 28px 28px;
+  background: #6f8a67; /* cor de fallback caso a imagem não carregue */
+}
+
+/* Fundo: a própria capa desfocada cria o degradê verde orgânico da referência */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  z-index: -2;
+  background: url("../../assets/capa-dom-quixote.png") center 38% / cover no-repeat;
+  filter: blur(44px) saturate(0.7) brightness(0.72);
+  transform: scale(1.12);
+}
+
+/* Camada verde translúcida por cima do desfoque para unificar a paleta */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(135, 168, 125, 0.14), transparent 55%),
+    linear-gradient(155deg, rgba(52, 67, 47, 0.78) 0%, rgba(93, 115, 86, 0.55) 50%, rgba(135, 168, 125, 0.4) 100%);
+}
+
+/* Botões do topo: um em cada ponta, sobre a capa */
+.hero__actions {
+  position: absolute;
+  z-index: 3;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none; /* só os botões recebem clique */
+}
+
+.hero__actions > * {
+  pointer-events: auto;
+}
+
+/* Botão circular branco com ícone */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; /* área mínima confortável para toque */
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--dark);
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(26, 0, 1, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: var(--white);
+  color: var(--wine);
+  transform: translateY(-2px);
+}
+
+.icon-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* Ícones de linha (seta e marcador) */
+.icon-btn .icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Estado ativo do favorito: círculo vinho e ícone preenchido */
+.icon-btn--favorite.is-active {
+  background: var(--wine);
+  color: var(--white);
+}
+
+.icon-btn--favorite.is-active .icon {
+  fill: currentColor;
+}
+
+/* Moldura da capa */
+.hero__cover {
+  position: relative;
+  z-index: 1;
+  width: clamp(170px, 58vw, 240px);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 26px 50px rgba(21, 31, 18, 0.45),
+    0 3px 10px rgba(21, 31, 18, 0.3);
+}
+
+/* A imagem ocupa a moldura e mantém a proporção 2:3 */
+.hero__cover img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 375 / 533;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+
+/* ==========================================================================
+   5. CONTEÚDO PRINCIPAL E CABEÇALHO DO LIVRO
+   ========================================================================== */
+
+.content {
+  padding: 26px var(--gutter) 112px; /* espaço extra embaixo para o CTA fixo */
+}
+
+/* Título: 24px Figtree 600 */
+.book-title {
+  color: var(--dark);
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+/* Autor: 14px Poppins 400 */
+.book-author {
+  margin-top: 6px;
+  color: var(--gray-text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Linha de badges */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Base das pills: 14px DM Sans 500 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Categoria: fundo rosa claro e texto vinho.
+   O color-mix escurece levemente o vinho do guia para o texto atingir
+   contraste AA sobre o rosa. Se o navegador não suportar, usa o token puro. */
+.badge--genre {
+  background: var(--rose-pale);
+  color: var(--wine);
+  color: color-mix(in srgb, var(--wine) 84%, var(--dark));
+}
+
+/* Disponibilidade: fundo verde claro e texto verde.
+   Mesmo ajuste de contraste: o verde puro do guia fica muito claro
+   sobre o fundo mint, então misturamos um pouco de --dark. */
+.badge--available {
+  background: var(--green-soft);
+  color: var(--green-text);
+  color: color-mix(in srgb, var(--green-text) 72%, var(--dark));
+}
+
+/* ==========================================================================
+   6. DESCRIÇÃO, PREÇO E BOTÃO PRINCIPAL
+   ========================================================================== */
+
+/* Descrição: 14px DM Sans 500 */
+.book-description {
+  max-width: 60ch;
+  margin-top: 22px;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+/* Preço à esquerda, botão à direita */
+.buy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+/* Preço: 24px DM Sans 600 */
+.price {
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* Base compartilhada por links e botões de ação */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 10px 16px;
+  border-radius: var(--radius-button);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Botão primário vinho */
+.btn--primary {
+  background: #ffffff; /*Alteração por Raul*/
+  color: #343434;
+  box-shadow: 0 2px 4px rgb(205, 223, 252);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 4px 6px rgb(205, 223, 252);
+  transform: translateY(-1px);
+}
+
+.btn--primary:active {
+  transform: translateY(0);
+}
+
+/* Círculo branco atrás do logo do Google para ele não sumir no vinho */
+.btn__google {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--white);
+  padding: 3px;
+  flex: 0 0 auto;
+}
+
+.btn__google img {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==========================================================================
+   7. FICHA TÉCNICA (SPECS)
+   Os itens são criados pelo JavaScript dentro de #specs.
+   ========================================================================== */
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border); /* borda inferior pedida na spec */
+}
+
+/* Cada coluna recebe um respiro lateral pequeno.
+   O flex em coluna mantém os valores alinhados na base mesmo quando
+   um label grande (ex.: "Ano de Publicação") quebra em duas linhas. */
+.spec {
+  display: flex;
+  flex-direction: column;
+  padding: 2px 6px;
+  text-align: center;
+}
+
+/* Divisórias verticais entre as colunas */
+.spec + .spec {
+  border-left: 1px solid var(--border);
+}
+
+/* Label: 10px Poppins 400 */
+.spec__label {
+  flex: 1 1 auto;
+  color: var(--gray-text);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+/* Valor: 20px DM Sans 600 */
+.spec__value {
+  margin-top: auto;
+  padding-top: 6px;
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+/* ==========================================================================
+   8. AVISO DE COMPRA NA LOJA FÍSICA
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 14px 18px;
+  border-radius: var(--radius-card);
+  background: var(--wine);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.notice__icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   9. SEÇÕES E ACORDEÕES
+   ========================================================================== */
+
+.section {
+  margin-top: 30px;
+}
+
+/* Título de seção: 16px Figtree 600 */
+.section__title {
+  color: var(--dark);
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Pill de condição do exemplar */
+.condition {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 9px 16px;
+  border-radius: var(--radius-button);
+  background: var(--green-soft);
+  color: var(--green-text);
+  color: color-mix(in srgb, var(--green-text) 72%, var(--dark));
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Texto descritivo do exemplar */
+.section__text {
+  max-width: 60ch;
+  margin-top: 14px;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* Card do acordeão (usado em "Onde encontrar") */
+.accordion {
+  position: relative;
+}
+
+.accordion--card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Acordeão sem card, separado por uma linha superior */
+.accordion--plain {
+  border-top: 1px solid var(--border);
+}
+
+.accordion__heading {
+  font: inherit;
+}
+
+/* Botão que abre/fecha o acordeão */
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 18px;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.accordion--plain .accordion__trigger {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.accordion__trigger:hover {
+  color: var(--wine);
+}
+
+/* Agrupa ícone + texto à esquerda */
+.accordion__leading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.accordion__icon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.accordion__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Seta que gira quando o acordeão abre */
+.accordion__chevron {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: var(--gray-text);
+  transition: transform 0.25s ease;
+}
+
+.accordion.is-open .accordion__chevron {
+  transform: rotate(180deg);
+}
+
+/* Truque de animação: a linha do grid vai de 0fr para 1fr */
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.accordion.is-open .accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+/* O body esconde o conteúdo durante a animação */
+.accordion__body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* O padding fica no inner para não "vazar" quando fechado */
+.accordion--card .accordion__inner {
+  padding: 0 18px 18px;
+}
+
+.accordion--plain .accordion__inner {
+  padding-bottom: 18px;
+}
+
+/* Mapinha decorativo do endereço */
+.mini-map {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ece9e1;
+}
+
+.mini-map__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Pino do mapa apontando para o centro */
+.mini-map__pin {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -100%);
+  filter: drop-shadow(0 4px 6px rgba(26, 0, 1, 0.28));
+}
+
+/* Etiqueta com o nome do sebo */
+.mini-map__label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  box-shadow: 0 3px 10px rgba(26, 0, 1, 0.12);
+}
+
+/* Bloco de endereço e horário */
+.place {
+  margin-top: 14px;
+}
+
+.place__name {
+  color: var(--dark);
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.place__address {
+  margin-top: 3px;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.place__hours {
+  margin-top: 2px;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Lista de dados da edição */
+.edition {
+  margin-top: 2px;
+}
+
+/* Cada linha tem rótulo à esquerda e valor à direita */
+.edition__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.edition__row:last-child {
+  border-bottom: 0;
+}
+
+.edition__label {
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.edition__value {
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: right;
+}
+
+/* ==========================================================================
+   10. CTA FIXO DO MOBILE
+   ========================================================================== */
+
+.sticky-cta {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 -10px 30px rgba(26, 0, 1, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  /* Começa escondido; o JS adiciona .is-visible depois de rolar */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(110%);
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sticky-cta.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.sticky-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.sticky-cta__price {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sticky-cta__label {
+  overflow: hidden;
+  color: var(--gray-text);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sticky-cta__value {
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.sticky-cta .btn {
+  min-height: 44px;
+  padding: 10px 18px;
+}
+
+/* ==========================================================================
+   11. RESPONSIVO
+   Mobile-first: o layout base vale até 767px.
+   ========================================================================== */
+
+/* ----- Tablet (768px) ---------------------------------------------- */
+@media (min-width: 768px) {
+  /* A página vira uma "moldura" centralizada */
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 24px 0;
+  }
+
+  /* O hero ganha cantos arredondados em todos os lados */
+  .hero {
+    padding: 88px 24px 34px;
+    border-radius: 28px;
+  }
+
+  .hero__cover {
+    width: 256px;
+  }
+
+  .content {
+    padding: 32px 8px 96px;
+  }
+
+  .section {
+    margin-top: 32px;
+  }
+
+  .sticky-cta__inner {
+    max-width: 720px;
+  }
+}
+
+/* ----- Desktop (1024px) -------------------------------------------- */
+@media (min-width: 1024px) {
+  /* Duas colunas: capa à esquerda, informações à direita */
+  .page {
+    display: grid;
+    grid-template-columns: minmax(330px, 400px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    max-width: 1120px;
+    padding: 40px 32px 48px;
+  }
+
+  /* A capa acompanha a rolagem enquanto o conteúdo passa */
+  .hero {
+    position: sticky;
+    top: 32px;
+    align-self: start;
+    padding: 92px 32px 36px;
+  }
+
+  .hero__cover {
+    width: min(100%, 290px);
+  }
+
+  .content {
+    padding: 8px 0 24px;
+  }
+
+  /* No desktop o preço e o botão já aparecem inline, então o CTA fixo some */
+  .sticky-cta {
+    display: none;
+  }
+
+  .section {
+    margin-top: 32px;
+  }
+}
+
+/* ----- Desktop grande (1440px) ------------------------------------- */
+@media (min-width: 1440px) {
+  .page {
+    grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+    gap: 64px;
+    max-width: 1200px;
+    padding-top: 56px;
+  }
+
+  .hero {
+    padding: 100px 40px 44px;
+  }
+
+  .hero__cover {
+    width: 300px;
+  }
+
+  .content {
+    padding-top: 16px;
+  }
+}
+
+/* ==========================================================================
+   12. PREFERÊNCIA POR MENOS MOVIMENTO
+   Desliga animações para quem configurou o sistema assim.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

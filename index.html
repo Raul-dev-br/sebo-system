@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sebo das Andorinhas — Telas</title>
+  <style>
+    /* ============================================================
+       HUB DE NAVEGAÇÃO
+       Página simples que lista todas as telas do projeto.
+       Serve para você pular direto pra qualquer uma delas.
+       ============================================================ */
+
+    /* Variáveis de cor: as mesmas do design system do app */
+    :root {
+      --cream-bg: #FAF7F2;
+      --wine: #AE525B;
+      --wine-light: #DD797E;
+      --rose-pale: #FFE0E5;
+      --dark: #1A0001;
+      --gray-text: #4D4D4D;
+      --border: #D8D8D8;
+      --white: #FFFFFF;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: var(--cream-bg);
+      color: var(--dark);
+      font-family: "DM Sans", system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-family: "Figtree", sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    header p {
+      color: var(--gray-text);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* Grid responsivo: 1 coluna no mobile, 2 no tablet, 3 no desktop */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* Cada card é um link para a tela */
+    .card {
+      display: block;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(174, 82, 91, .15);
+      border-color: var(--wine-light);
+      outline: none;
+    }
+
+    /* Ícone circular com a cor da tela */
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--rose-pale);
+      color: var(--wine);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      font-family: "Figtree", sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .card p {
+      color: var(--gray-text);
+      font-size: 13px;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Etiqueta que diz se a tela é mobile ou desktop */
+    .tag {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--rose-pale);
+      color: var(--wine);
+      font-size: 10px;
+      font-weight: 600;
+      font-family: "Poppins", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .tag.desktop {
+      background: #D8FEE4;
+      color: #7C9A73;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Sebo das Andorinhas</h1>
+      <p>Hub de navegação entre as telas reconstruídas a partir do Figma</p>
+    </header>
+
+    <div class="grid">
+      <a class="card" href="telas/entrada/index.html">
+        <div class="card-icon">👋</div>
+        <h2>Entrada</h2>
+        <p>Tela de boas-vindas com o fundo ilustrado e os botões de acesso.</p>
+        <span class="tag">Mobile</span>
+      </a>
+
+      <a class="card" href="telas/login/index.html">
+        <div class="card-icon">🔑</div>
+        <h2>Login</h2>
+        <p>Formulário de e-mail e senha com card branco sobre a ilustração.</p>
+        <span class="tag">Mobile</span>
+      </a>
+
+      <a class="card" href="telas/recuperar-senha/index.html">
+        <div class="card-icon">📧</div>
+        <h2>Recuperar senha</h2>
+        <p>Pedido de link de recuperação via e-mail, com validação.</p>
+        <span class="tag">Mobile</span>
+      </a>
+
+      <a class="card" href="telas/vitrine/index.html">
+        <div class="card-icon">📚</div>
+        <h2>Vitrine</h2>
+        <p>Banner de achados, busca, filtros por categoria e cards de livros.</p>
+        <span class="tag">Mobile</span>
+      </a>
+
+      <a class="card" href="telas/detalhes-livro/index.html">
+        <div class="card-icon">📖</div>
+        <h2>Detalhes do livro</h2>
+        <p>Capa, preço, condição do exemplar e ficha técnica da edição.</p>
+        <span class="tag">Mobile</span>
+      </a>
+
+      <a class="card" href="telas/admin/index.html">
+        <div class="card-icon">📊</div>
+        <h2>Admin</h2>
+        <p>Dashboard com métricas, últimas cadastros, busca rápida e gráfico.</p>
+        <span class="tag desktop">Desktop</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

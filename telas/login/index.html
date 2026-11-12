@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FAF7F2">
+  <meta name="description" content="Faça login na sua conta do Sebo das Andorinhas.">
+  <title>Faça login na sua conta — Sebo das Andorinhas</title>
+
+  <!-- Fontes do projeto: Figtree (títulos), DM Sans (texto) e Poppins (detalhes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!--
+    .login-shell é o "palco" da tela.
+    No mobile ele ocupa a largura toda (com um limite confortável).
+    A partir de 768px ele vira um grid de duas colunas: ilustração + formulário.
+  -->
+  <div class="login-shell">
+
+    <!-- Botão circular de voltar. Fica por cima da ilustração, no canto superior esquerdo. -->
+    <a class="back" href="../entrada/index.html" aria-label="Voltar para a tela de entrada">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <path d="M20 12H4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M10.5 5.5 4 12l6.5 6.5" stroke="currentColor" stroke-width="2.6"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <!--
+      Ilustração de fundo.
+      A imagem é recortada via CSS (object-fit/object-position) para repetir
+      o enquadramento da tela de referência do Figma.
+    -->
+    <div class="scene">
+      <img
+        class="scene__img"
+        src="../../assets/bg-login.png"
+        alt="Ilustração de uma leitora escolhendo um livro em uma estante de madeira"
+        fetchpriority="high">
+    </div>
+
+    <!--
+      Card creme que "invade" a ilustração no mobile.
+      No desktop ele passa a ser o painel direito, sem cantos arredondados.
+    -->
+    <main class="card">
+      <div class="card__inner">
+
+        <!-- Título e subtítulo da tela -->
+        <header class="card__header">
+          <h1 class="card__title">Faça login na sua conta</h1>
+          <p class="card__subtitle">Guarde os seus favoritos e encontra<br>a próxima leitura!</p>
+        </header>
+
+        <!--
+          Formulário de login.
+          "novalidate" desliga as mensagens padrão do navegador:
+          nós mesmos validamos e mostramos os erros em português.
+        -->
+        <form class="login-form" id="form-login" novalidate>
+
+          <!-- Campo de e-mail -->
+          <div class="field">
+            <label class="field__label" for="email">Email</label>
+
+            <div class="input-shell input-shell--icon">
+              <!-- Ícone de envelope desenhado em SVG (sem CDN) -->
+              <span class="input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.4"
+                        stroke="currentColor" stroke-width="1.7"/>
+                  <path d="m3.4 6.6 8.6 6.3 8.6-6.3"
+                        stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+
+              <input
+                class="input"
+                id="email"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                spellcheck="false"
+                placeholder="fulanodetal@gmail.com"
+                aria-describedby="email-erro">
+            </div>
+
+            <!-- Mensagem de erro do e-mail (preenchida pelo JS) -->
+            <p class="field__error" id="email-erro" aria-live="polite" hidden></p>
+          </div>
+
+          <!-- Campo de senha -->
+          <div class="field">
+            <label class="field__label" for="senha">Senha</label>
+
+            <div class="input-shell input-shell--password">
+              <input
+                class="input"
+                id="senha"
+                name="senha"
+                type="password"
+                autocomplete="current-password"
+                placeholder="senha123"
+                aria-describedby="senha-erro">
+
+              <!--
+                Botão do "olho": alterna entre senha escondida e visível.
+                Fica dentro do input visualmente, mas é um button de verdade
+                (acessível por teclado).
+              -->
+              <button
+                class="toggle-senha"
+                id="toggle-senha"
+                type="button"
+                aria-label="Mostrar senha"
+                aria-pressed="false"
+                aria-controls="senha">
+                <!-- Olho fechado (estado inicial) -->
+                <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M3 10.5c2.8 3.6 5.8 5.4 9 5.4s6.2-1.8 9-5.4"
+                        stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5.4 13.9 3.9 16.3M9.5 16.1l-.7 2.6M14.5 16.1l.7 2.6M18.6 13.9l1.5 2.4"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+
+                <!-- Olho aberto (quando a senha está visível) -->
+                <svg class="icon-eye" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                        stroke="currentColor" stroke-width="1.7"
+                        stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Mensagem de erro da senha (preenchida pelo JS) -->
+            <p class="field__error" id="senha-erro" aria-live="polite" hidden></p>
+          </div>
+
+          <!-- Link "Esqueceu senha?" alinhado à direita -->
+          <div class="form__forgot">
+            <a href="../recuperar-senha/index.html">Esqueceu senha?</a>
+          </div>
+
+          <!-- Ações principais -->
+          <button class="btn btn--primary" type="submit">Entre com sua conta</button>
+          <button class="btn btn--secondary" type="button" id="btn-visitante">Continuar como Visitante</button>
+        </form>
+
+        <!-- Link de cadastro no rodapé do card -->
+        <p class="card__footer">
+          <span>Ainda não tem conta?</span>
+          <a href="../entrada/index.html">Criar Conta</a>
+        </p>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- ==========================================================
+       Sebo das Andorinhas — Detalhes do Livro (Dom Quixote)
+       Tela estática em HTML + CSS + JavaScript puro.
+       ========================================================== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Conheça Dom Quixote, de Miguel de Cervantes, disponível no Sebo das Andorinhas." />
+  <meta name="theme-color" content="#AE525B" />
+  <title>Dom Quixote — Sebo das Andorinhas</title>
+
+  <!-- Fontes do projeto: Figtree (títulos), DM Sans (textos) e Poppins (apoio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- A capa é o maior elemento visual da tela; avisamos o navegador para baixá-la cedo -->
+  <link rel="preload" as="image" href="../../assets/capa-dom-quixote.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Link de acessibilidade: aparece apenas quando o usuário navega pelo teclado -->
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo do livro</a>
+
+  <!-- ==========================================================
+       PÁGINA: no mobile tudo fica em uma coluna.
+       No desktop o CSS transforma .page em duas colunas.
+       ========================================================== -->
+  <div class="page">
+
+    <!-- --------------------------------------------------------
+         HERO: faixa verde com a capa em destaque.
+         Os botões de voltar e favorito ficam sobrepostos no topo.
+         -------------------------------------------------------- -->
+    <section class="hero" aria-label="Capa do livro Dom Quixote">
+      <div class="hero__actions">
+        <!-- Link (estilizado como botão circular) que volta para a vitrine -->
+        <a
+          class="icon-btn"
+          href="../vitrine/index.html"
+          data-back
+          aria-label="Voltar para a vitrine"
+          title="Voltar para a vitrine"
+        >
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </a>
+
+        <!-- Botão de favorito: o JavaScript alterna o estado e o preenchimento do ícone -->
+        <button
+          class="icon-btn icon-btn--favorite"
+          id="btn-favorito"
+          type="button"
+          aria-label="Adicionar Dom Quixote aos favoritos"
+          aria-pressed="false"
+        >
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.5 3.75h11a.75.75 0 0 1 .75.75V21l-6.25-3.6L5.75 21V4.5a.75.75 0 0 1 .75-.75Z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- A moldura da capa tem proporção próxima de 2:3 (375 × 533 px no arquivo original) -->
+      <figure class="hero__cover">
+        <img
+          src="../../assets/capa-dom-quixote.png"
+          alt="Capa de Dom Quixote: Dom Quixote montado em um cavalo ao lado de Sancho Pança em seu burro"
+          width="375"
+          height="533"
+          fetchpriority="high"
+        />
+      </figure>
+    </section>
+
+    <!-- --------------------------------------------------------
+         CONTEÚDO PRINCIPAL
+         -------------------------------------------------------- -->
+    <main class="content" id="conteudo">
+
+      <!-- Título, autor e badges de categoria/disponibilidade -->
+      <header class="book-head">
+        <h1 class="book-title">Dom Quixote</h1>
+        <p class="book-author">Miguel de Cervantes</p>
+
+        <ul class="badges" aria-label="Categoria e disponibilidade">
+          <li class="badge badge--genre">Romance</li>
+          <li class="badge badge--available">Disponível</li>
+        </ul>
+      </header>
+
+      <!-- Sinopse curta do livro -->
+      <p class="book-description">
+        Uma sátira genial sobre idealismo e loucura, onde um fidalgo confunde moinhos de
+        vento com gigantes. Uma jornada hilária e comovente sobre as ilusões que moldam
+        nossa realidade.
+      </p>
+
+      <!-- Preço + ação principal. A linha é observada pelo JS para acionar o botão fixo -->
+      <div class="buy-row" id="buy-row">
+        <p class="price"><span class="sr-only">Preço: </span>R$ 24,00</p>
+
+        <a
+          class="btn btn--primary"
+          href="https://www.google.com/search?q=Dom+Quixote+Miguel+de+Cervantes"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Pesquisar Dom Quixote no Google (abre em nova aba)"
+        >
+          <span class="btn__google" aria-hidden="true">
+            <img src="../../assets/icone-pesquisar.png" alt="" width="20" height="20" loading="lazy" />
+          </span>
+          Pesquisar
+        </a>
+      </div>
+
+      <!-- Ficha técnica em 3 colunas. O JavaScript preenche os itens a partir de um array -->
+      <dl class="specs" id="specs" aria-label="Especificações do livro"></dl>
+
+      <!-- Aviso de compra presencial -->
+      <p class="notice" role="note">
+        <svg class="notice__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+          <path d="M3 9.5 4.6 4h14.8L21 9.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M4.5 9.5h15V20a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          <path d="M9.5 21v-5.5h5V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Compra somente na loja física</span>
+      </p>
+
+      <!-- Seção sobre o estado do exemplar -->
+      <section class="section" aria-labelledby="titulo-sobre">
+        <h2 class="section__title" id="titulo-sobre">Sobre este exemplar</h2>
+        <p class="condition">Usando · Como novo</p>
+        <p class="section__text">
+          Páginas amareladas pelo tempo. Sem grifos, com leves marcas na capa
+        </p>
+      </section>
+
+      <!-- Acordeão com o endereço e um mapinha simples -->
+      <section class="section section--tight" aria-labelledby="titulo-local">
+        <div class="accordion accordion--card" data-accordion>
+          <h2 class="accordion__heading" id="titulo-local">
+            <button
+              class="accordion__trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="painel-local"
+              data-accordion-trigger
+            >
+              <span class="accordion__leading">
+                <span class="accordion__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                    <path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" fill="#AE525B" />
+                    <circle cx="12" cy="10" r="2.7" fill="#FFFFFF" />
+                  </svg>
+                </span>
+                <span>Onde encontrar no Sebo?</span>
+              </span>
+
+              <svg class="accordion__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </h2>
+
+          <div
+            class="accordion__panel"
+            id="painel-local"
+            role="region"
+            aria-labelledby="titulo-local"
+            data-accordion-panel
+            inert
+          >
+            <div class="accordion__body">
+              <div class="accordion__inner">
+                <!-- Mapinha decorativo: formas simples em SVG, sem imagem externa -->
+                <div class="mini-map" aria-hidden="true">
+                  <svg class="mini-map__canvas" viewBox="0 0 600 200" preserveAspectRatio="none" focusable="false">
+                    <rect width="600" height="200" fill="#ECE9E1" />
+                    <rect x="36" y="20" width="112" height="58" rx="7" fill="#DCE7D2" />
+                    <rect x="418" y="116" width="146" height="62" rx="7" fill="#DCE7D2" />
+                    <rect x="430" y="18" width="86" height="44" rx="7" fill="#E3DED4" />
+                    <path d="M-20 152 L620 58" stroke="#F9F7F2" stroke-width="28" />
+                    <path d="M150 -20 L262 220" stroke="#F9F7F2" stroke-width="20" />
+                    <path d="M356 -20 L452 220" stroke="#F9F7F2" stroke-width="14" />
+                    <path d="M-20 82 L620 82" stroke="#F9F7F2" stroke-width="11" opacity=".85" />
+                    <path d="M-20 152 L620 58" stroke="#D8D2C6" stroke-width="2" stroke-dasharray="10 9" opacity=".75" />
+                  </svg>
+
+                  <svg class="mini-map__pin" viewBox="0 0 24 24" fill="none" focusable="false">
+                    <path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" fill="#AE525B" />
+                    <circle cx="12" cy="10" r="2.7" fill="#FFFFFF" />
+                  </svg>
+                  <span class="mini-map__label">Sebo das Andorinhas</span>
+                </div>
+
+                <div class="place">
+                  <p class="place__name">Sebo das Andorinhas</p>
+                  <p class="place__address" id="endereco-sebo"></p>
+                  <p class="place__hours" id="horario-sebo"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Acordeão com os dados da edição (preenchido pelo JavaScript) -->
+      <section class="section section--tight" aria-labelledby="titulo-edicao">
+        <div class="accordion accordion--plain" data-accordion>
+          <h2 class="accordion__heading" id="titulo-edicao">
+            <button
+              class="accordion__trigger"
+              type="button"
+              aria-expanded="false"
+              aria-controls="painel-edicao"
+              data-accordion-trigger
+            >
+              <span class="accordion__leading">Detalhes da Edição</span>
+
+              <svg class="accordion__chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </h2>
+
+          <div
+            class="accordion__panel"
+            id="painel-edicao"
+            role="region"
+            aria-labelledby="titulo-edicao"
+            data-accordion-panel
+            inert
+          >
+            <div class="accordion__body">
+              <div class="accordion__inner">
+                <dl class="edition" id="edition-list"></dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- --------------------------------------------------------
+       CTA FIXO (somente mobile/tablet)
+       Fica escondido até a linha de preço sair da tela.
+       No desktop o CSS esconde este bloco por completo.
+       -------------------------------------------------------- -->
+  <aside class="sticky-cta" id="cta-fixo" aria-label="Comprar Dom Quixote" data-sticky-cta inert>
+    <div class="sticky-cta__inner">
+      <div class="sticky-cta__price">
+        <span class="sticky-cta__label">Dom Quixote</span>
+        <span class="sticky-cta__value">R$ 24,00</span>
+      </div>
+
+      <a
+        class="btn btn--primary"
+        href="https://www.google.com/search?q=Dom+Quixote+Miguel+de+Cervantes"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Pesquisar Dom Quixote no Google (abre em nova aba)"
+      >
+        Pesquisar
+      </a>
+    </div>
+  </aside>
+
+  <!-- Região viva: anuncia mudanças de favorito para leitores de tela -->
+  <p class="sr-only" id="status-favorito" role="status" aria-live="polite"></p>
+
+  <!-- O script fica no fim do body para o HTML já existir quando ele rodar -->
+  <script src="script.js"></script>
+</body>
+</html>

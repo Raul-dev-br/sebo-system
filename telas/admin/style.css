@@ -1,0 +1,1661 @@
+/* ============================================================
+   SEBO DAS ANDORINHAS — TELA ADMIN
+   CSS puro, mobile-first. As larguras de referência são:
+   360px / 390px (mobile), 768px (tablet), 1024px e 1440px (desktop).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. VARIÁVEIS DO DESIGN SYSTEM
+   Todas as cores do guia ficam aqui para facilitar a manutenção.
+   ------------------------------------------------------------ */
+:root {
+  /* Paleta oficial */
+  --cream-bg: #FAF7F2;
+  --cream-bg-alt: #F9F6F0;
+  --white: #FFFFFF;
+  --wine: #AE525B;
+  --wine-light: #DD797E;
+  --rose-soft: #EEC4C3;
+  --rose-pale: #FFE0E5;
+  --green-soft: #D8FEE4;
+  --green-text: #7C9A73;
+  --dark: #1A0001;
+  --gray-text: #4D4D4D;
+  --border: #D8D8D8;
+  --surface: #F4F4F4;
+  --amber-soft: #FFF4E0;
+
+  /* Cores extras do painel (tons usados nos cards de métricas) */
+  --admin-bg: #FDFBF9;
+  --card-border: #F0E7DE;
+  --muted: #77716C;
+  --green-strong: #3E8B5D;
+  --blue-strong: #387C9F;
+  --amber-strong: #A86F18;
+
+  /* Medidas e efeitos */
+  --sidebar-desktop: 264px;
+  --sidebar-tablet: 72px;
+  --radius-card: 16px;
+  --radius-md: 12px;
+  --shadow-card: 0 2px 4px rgba(26, 0, 1, 0.03), 0 18px 40px -34px rgba(26, 0, 1, 0.28);
+  --shadow-cover: 0 8px 16px -12px rgba(26, 0, 1, 0.55);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ------------------------------------------------------------
+   2. RESET E BASE
+   Remove margens padrão e deixa o cálculo de largura previsível.
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--admin-bg);
+  color: var(--dark);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Elementos de mídia nunca “estouram” o container */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Títulos usam Figtree, conforme o guia */
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Figtree", "DM Sans", sans-serif;
+}
+
+/* Foco bem visível para navegação por teclado */
+:focus-visible {
+  outline: 3px solid var(--wine);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------
+   3. UTILITÁRIOS DE ACESSIBILIDADE
+   ------------------------------------------------------------ */
+
+/* Esconde visualmente, mas mantém para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Link “Pular para o conteúdo”: fica oculto até receber foco com Tab */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--wine);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 0.2s var(--ease);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------
+   4. ESTRUTURA GERAL
+   No mobile existe só a coluna principal; a sidebar é fixa e
+   desliza por cima. A partir de 768px entra a coluna de ícones.
+   ------------------------------------------------------------ */
+.app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   5. SIDEBAR
+   ------------------------------------------------------------ */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: min(84vw, 300px);
+  padding: 18px 14px 28px;
+  overflow-y: auto;
+  color: var(--white);
+  /* Gradiente rosa do print, com um brilho suave no topo */
+  background:
+    radial-gradient(120% 70% at 12% 0%, rgba(255, 255, 255, 0.26), transparent 58%),
+    linear-gradient(168deg, #D77F8C 0%, #E2939D 42%, #F2BEBD 100%);
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.3s var(--ease), visibility 0.3s var(--ease);
+}
+
+/* Estado aberto no mobile */
+.sidebar.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+/* Botão de fechar (mobile) */
+.sidebar__close {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+
+.sidebar__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px 30px;
+  color: var(--white);
+}
+
+.brand__icon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  font-family: "Figtree", sans-serif;
+  font-style: italic;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+}
+
+.brand__line {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.brand__line--big {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+/* Navegação */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.nav__item:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.nav__item:focus-visible {
+  outline-color: var(--white);
+}
+
+/* Item ativo: pílula translúcida + indicador vinho à esquerda */
+.nav__item.is-active {
+  background: rgba(255, 255, 255, 0.44);
+  font-weight: 600;
+  box-shadow: 0 6px 16px -12px rgba(80, 20, 30, 0.5);
+}
+
+.nav__item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 22px;
+  border-radius: 99px;
+  background: #8E3E48;
+  transform: translateY(-50%);
+}
+
+.nav__icon {
+  flex: none;
+  width: 21px;
+  height: 21px;
+}
+
+/* Overlay escuro do menu mobile */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(26, 0, 1, 0.42);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s var(--ease), visibility 0.25s var(--ease);
+}
+
+.sidebar-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Evita rolagem do fundo enquanto o menu mobile está aberto */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   6. HEADER ROSA
+   ------------------------------------------------------------ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 72px;
+  padding: 0 16px;
+  background:
+    radial-gradient(120% 160% at 0% 0%, rgba(255, 255, 255, 0.16), transparent 55%),
+    linear-gradient(102deg, #E2929D 0%, #E9A7AB 46%, #F1C5C0 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset;
+}
+
+/* Botão hambúrguer (mobile) */
+.menu-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.24);
+  color: var(--white);
+  transition: background 0.2s var(--ease);
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.menu-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.topbar__greeting {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--white);
+  font-family: "Figtree", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 1px rgba(110, 45, 55, 0.16);
+  white-space: nowrap;
+}
+
+/* O aceno fica no HTML como decoração (não é lido duas vezes) */
+.topbar__wave {
+  font-size: 0.95em;
+}
+
+/* Usuário no canto direito */
+.topbar__user {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  color: var(--white);
+}
+
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: linear-gradient(150deg, #8E3E48 0%, #C46C72 60%, #E8A7A4 100%);
+  color: var(--white);
+  font-family: "Figtree", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 10px -4px rgba(80, 20, 30, 0.5);
+}
+
+.topbar__user-info {
+  display: none;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.topbar__name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.topbar__role {
+  font-size: 11px;
+  opacity: 0.88;
+}
+
+/* ------------------------------------------------------------
+   7. CONTEÚDO E GRADE DO DASHBOARD
+   ------------------------------------------------------------ */
+.content {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 16px 16px 36px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+/* Ordem no mobile: métricas → últimos → pesquisa → gráfico */
+.metrics { order: 1; }
+.latest { order: 2; }
+.quick { order: 3; }
+.chart-card { order: 4; }
+
+/* ------------------------------------------------------------
+   8. CARDS DE MÉTRICAS
+   Cada card tem fundo pastel, borda e ícone próprios.
+   ------------------------------------------------------------ */
+.metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 85px;
+  padding: 13px 15px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.metric__body {
+  min-width: 0;
+}
+
+.metric__label {
+  margin-bottom: 2px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.metric__value {
+  font-family: "Figtree", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.metric__icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+/* Variações de cor */
+.metric--clients {
+  border-color: #93B99B;
+  background: #EAF5EC;
+}
+
+.metric--clients .metric__label { color: #1F4A32; }
+.metric--clients .metric__value { color: var(--green-strong); }
+.metric--clients .metric__icon {
+  background: #CFE9D5;
+  color: var(--green-strong);
+}
+
+.metric--books {
+  border-color: #93B7CB;
+  background: #EAF4FA;
+}
+
+.metric--books .metric__label { color: #1E4052; }
+.metric--books .metric__value { color: var(--blue-strong); }
+.metric--books .metric__icon {
+  background: #CFE7F2;
+  color: var(--blue-strong);
+}
+
+.metric--available {
+  border-color: #D2AB67;
+  background: #FDF4E3;
+}
+
+.metric--available .metric__label { color: #5A3A0D; }
+.metric--available .metric__value { color: var(--amber-strong); }
+.metric--available .metric__icon {
+  background: #F4E1BE;
+  color: #B47A1F;
+}
+
+/* ------------------------------------------------------------
+   9. TÍTULOS DE SEÇÃO
+   ------------------------------------------------------------ */
+.section-title {
+  margin-bottom: 10px;
+  color: var(--dark);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+/* ------------------------------------------------------------
+   10. ÚLTIMOS LIVROS CADASTRADOS
+   ------------------------------------------------------------ */
+.latest__card,
+.quick__card,
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.latest__card {
+  padding: 14px;
+}
+
+.latest__grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* No mobile os livros ficam em 2 colunas e as ações vão para baixo */
+.latest__books {
+  display: grid;
+  flex: 1 1 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 12px;
+  min-width: 0;
+}
+
+/* Card individual de livro */
+.book {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.book__cover {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 7px;
+  background: var(--surface);
+  box-shadow: var(--shadow-cover);
+  container-type: inline-size;
+  transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
+}
+
+.book__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book:hover .book__cover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 24px -16px rgba(26, 0, 1, 0.65);
+}
+
+.book__title {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 2px;
+  color: var(--dark);
+  font-family: "Figtree", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.book__author {
+  overflow: hidden;
+  color: var(--gray-text);
+  font-family: "DM Sans", sans-serif;
+  font-size: 11px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Seta entre os livros e os botões (só aparece no desktop largo) */
+.latest__more {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dark);
+}
+
+.latest__more svg {
+  width: 24px;
+  height: 24px;
+}
+
+.latest__more:hover {
+  color: var(--wine);
+}
+
+/* Botões de ação */
+.latest__actions {
+  display: grid;
+  flex: 1 1 100%;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 62px;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--white);
+  font-family: "DM Sans", sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.15;
+  transition: transform 0.18s var(--ease), background 0.18s var(--ease);
+}
+
+.action:hover {
+  transform: translateY(-2px);
+}
+
+.action svg {
+  width: 22px;
+  height: 22px;
+}
+
+.action--new {
+  border: 1.5px dashed var(--wine);
+  color: var(--wine);
+}
+
+.action--new:hover {
+  background: #FFF7F5;
+}
+
+.action--clients {
+  border: 1.5px solid #BFDCC7;
+  background: #EDF7F0;
+  color: #4F7D58;
+}
+
+.action--clients:hover {
+  background: #E2F2E7;
+}
+
+/* ------------------------------------------------------------
+   11. PESQUISA RÁPIDA
+   ------------------------------------------------------------ */
+.quick__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.quick__head .section-title {
+  margin-bottom: 0;
+}
+
+.quick__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Campo de busca com ícone dentro */
+.search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.search__icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: #8B8580;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.search__input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px 0 38px;
+  border: 1px solid #E6DED4;
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--dark);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+
+.search__input::placeholder {
+  color: #8F8983;
+}
+
+.search__input:focus {
+  border-color: var(--wine);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(174, 82, 91, 0.16);
+}
+
+/* Botão de ordenação (ícone de ajustes) */
+.icon-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #6E6863;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+
+.icon-button svg {
+  width: 21px;
+  height: 21px;
+}
+
+.icon-button:hover {
+  background: #F7F1EA;
+  color: var(--wine);
+}
+
+.icon-button[aria-pressed="true"] {
+  background: var(--rose-pale);
+  color: var(--wine);
+}
+
+.quick__card {
+  padding: 18px 16px 14px;
+}
+
+/* Grade de livros: 2 colunas no mobile */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 14px;
+}
+
+/* Mensagem de busca vazia */
+.empty-state {
+  padding: 28px 12px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Paginação */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #F3ECE4;
+}
+
+.pagination__info {
+  color: #6E6863;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.pagination__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #EAE1D7;
+  border-radius: 8px;
+  background: var(--white);
+  color: #6E6863;
+  transition: border-color 0.18s var(--ease), color 0.18s var(--ease), background 0.18s var(--ease);
+}
+
+.page-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.page-button:hover:not(:disabled) {
+  border-color: var(--wine);
+  background: #FFF9F7;
+  color: var(--wine);
+}
+
+.page-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+/* ------------------------------------------------------------
+   12. GRÁFICO DONUT + LEGENDA
+   O SVG é gerado no JS; aqui cuidamos do visual.
+   ------------------------------------------------------------ */
+.chart-card {
+  padding: 18px 20px 20px;
+}
+
+.chart-card__title {
+  margin-bottom: 16px;
+  color: var(--dark);
+  font-size: 16.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* O donut em si */
+.donut {
+  position: relative;
+  width: min(72%, 190px);
+  aspect-ratio: 1;
+}
+
+.donut__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+
+/* Cada fatia é um círculo SVG com dasharray; clique e teclado ativos no JS */
+.donut__segment {
+  fill: none;
+  stroke-width: 26;
+  cursor: pointer;
+  transition: opacity 0.22s var(--ease), stroke-width 0.22s var(--ease);
+}
+
+.donut__segment:hover,
+.donut__segment:focus-visible {
+  stroke-width: 30;
+  outline: none;
+}
+
+.donut__segment:focus-visible {
+  filter: drop-shadow(0 0 4px rgba(26, 0, 1, 0.35));
+}
+
+.donut.is-highlighting .donut__segment:not(.is-active) {
+  opacity: 0.25;
+}
+
+.donut.has-active .donut__segment.is-active {
+  stroke-width: 31;
+}
+
+/* Texto central do donut */
+.donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22%;
+  pointer-events: none;
+  text-align: center;
+}
+
+.donut__value {
+  color: var(--dark);
+  font-family: "Figtree", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.donut__label {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.donut__label:empty {
+  display: none;
+}
+
+/* Legenda em botões empilhados */
+.legend {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend__button {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 4px 5px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--dark);
+  font-family: "DM Sans", sans-serif;
+  font-size: 11.5px;
+  line-height: 1.2;
+  text-align: left;
+  transition: background 0.18s var(--ease);
+}
+
+.legend__button:hover {
+  background: #FAF5EF;
+}
+
+.legend__button[aria-pressed="true"] {
+  background: #FBF0EC;
+}
+
+.legend__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--dot-color, var(--wine));
+  box-shadow: 0 0 0 2px rgba(26, 0, 1, 0.04);
+}
+
+.legend__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend__value {
+  color: var(--muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend__button[aria-pressed="true"] .legend__value {
+  color: var(--wine);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   13. CAPAS “TIPOGÁFICAS” DE APOIO
+   Os assets não têm capa de 1984 nem de “A menina que roubava
+   livros”. Para não usar uma capa errada, criamos capas só com
+   tipografia (sem ilustração), no mesmo formato das fotos.
+   ------------------------------------------------------------ */
+.cover-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6%;
+  width: 100%;
+  height: 100%;
+  padding: 9%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.cover-art__author {
+  font-family: "DM Sans", sans-serif;
+  font-size: 8px;
+  font-size: 7.5cqi;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.cover-art__title {
+  font-family: "Figtree", sans-serif;
+  font-weight: 700;
+  line-height: 1.02;
+}
+
+/* 1984: capa escura com tipografia clara e filete vermelho */
+.cover-art--1984 {
+  background:
+    radial-gradient(circle at 50% 28%, #352B2C 0%, #171315 72%);
+  color: #F1E4CE;
+}
+
+.cover-art--1984 .cover-art__author {
+  color: #DCC9AE;
+}
+
+.cover-art--1984 .cover-art__title {
+  padding-bottom: 5cqi;
+  border-bottom: 2.5cqi solid #B33A30;
+  font-size: 34cqi;
+  letter-spacing: -0.02em;
+}
+
+/* A menina que roubava livros: capa clara e tipográfica */
+.cover-art--menina {
+  background: linear-gradient(158deg, #F8F2E4 0%, #EFE5D1 100%);
+  color: #201E1C;
+}
+
+.cover-art--menina .cover-art__author {
+  color: #5E574E;
+}
+
+.cover-art--menina .cover-art__title {
+  width: 86%;
+  font-size: 18cqi;
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+
+.cover-art--menina .cover-art__mark {
+  width: 38%;
+  height: 1.6cqi;
+  margin-top: 3cqi;
+  border-radius: 99px;
+  background: #B33A30;
+}
+
+/* ------------------------------------------------------------
+   14. TABLET (768px a 1023px)
+   Sidebar vira uma faixa estreita de ícones (72px).
+   ------------------------------------------------------------ */
+@media (min-width: 768px) {
+  .app {
+    grid-template-columns: var(--sidebar-tablet) minmax(0, 1fr);
+  }
+
+  /* Sidebar estática, só com ícones */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    padding: 20px 10px 28px;
+    transform: none;
+    visibility: visible;
+  }
+
+  .sidebar__close {
+    display: none;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 6px 0 34px;
+  }
+
+  .brand__icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand__text {
+    display: none;
+  }
+
+  .nav {
+    gap: 8px;
+  }
+
+  .nav__item {
+    justify-content: center;
+    padding: 15px 0;
+  }
+
+  .nav__label {
+    /* Some visualmente, mas o title do link continua acessível */
+    display: none;
+  }
+
+  .nav__item.is-active::before {
+    left: 4px;
+    height: 20px;
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  .topbar {
+    height: 84px;
+    padding: 0 24px;
+    gap: 18px;
+  }
+
+  .topbar__greeting {
+    font-size: 22px;
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .topbar__user-info {
+    display: flex;
+  }
+
+  .content {
+    padding: 24px 24px 40px;
+  }
+
+  /* Cabeçalho e grade */
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    order: 1;
+  }
+
+  /* No tablet o gráfico fica logo abaixo das métricas */
+  .chart-card {
+    order: 2;
+  }
+
+  .latest {
+    order: 3;
+  }
+
+  .quick {
+    order: 4;
+  }
+
+  .metric {
+    min-height: 88px;
+    padding: 14px 16px;
+  }
+
+  .metric__label {
+    font-size: 13px;
+  }
+
+  .metric__value {
+    font-size: 29px;
+  }
+
+  .metric__icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .latest__card {
+    padding: 16px;
+  }
+
+  .latest__books {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px 14px;
+  }
+
+  .latest__actions {
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    justify-content: flex-start;
+  }
+
+  .action {
+    min-height: 52px;
+    flex-direction: row;
+    gap: 7px;
+    font-size: 12px;
+  }
+
+  .action svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .quick__head {
+    gap: 16px;
+  }
+
+  .quick__tools {
+    flex: 0 1 auto;
+    width: auto;
+    margin-left: auto;
+  }
+
+  .search {
+    flex: 0 0 250px;
+  }
+
+  .quick__card {
+    padding: 20px 18px 16px;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+
+  .book__title {
+    font-size: 13px;
+  }
+
+  /* Gráfico na largura total: donut e legenda lado a lado */
+  .chart {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 36px;
+  }
+
+  .donut {
+    flex: none;
+    width: 205px;
+  }
+
+  .donut__value {
+    font-size: 30px;
+  }
+
+  .legend {
+    flex: 1;
+    max-width: 340px;
+    gap: 4px;
+  }
+
+  .legend__button {
+    font-size: 12.5px;
+    padding: 6px 8px;
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    gap: 9px;
+  }
+
+  .legend__dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .legend__value {
+    font-size: 11px;
+  }
+}
+
+/* ------------------------------------------------------------
+   15. DESKTOP (a partir de 1024px)
+   Sidebar expandida e dashboard em 2 colunas.
+   ------------------------------------------------------------ */
+@media (min-width: 1024px) {
+  .app {
+    grid-template-columns: var(--sidebar-desktop) minmax(0, 1fr);
+  }
+
+  .sidebar {
+    padding: 28px 16px 32px;
+  }
+
+  .brand {
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 4px 4px 38px;
+  }
+
+  .brand__icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand__text {
+    display: flex;
+  }
+
+  .nav__item {
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .nav__label {
+    display: inline;
+  }
+
+  .nav__item.is-active::before {
+    left: 0;
+    height: 22px;
+  }
+
+  .topbar {
+    height: 98px;
+    padding: 0 32px;
+  }
+
+  .topbar__greeting {
+    font-size: 24px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .topbar__name {
+    font-size: 16px;
+  }
+
+  .topbar__role {
+    font-size: 12px;
+  }
+
+  .content {
+    padding: 28px 32px 44px;
+  }
+
+  /* Duas colunas: seções à esquerda, gráfico no canto superior direito */
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 23vw, 324px);
+    grid-template-areas:
+      "metrics chart"
+      "latest chart"
+      "quick chart";
+    align-items: start;
+    gap: 22px 24px;
+  }
+
+  .metrics {
+    grid-area: metrics;
+  }
+
+  .chart-card {
+    grid-area: chart;
+    order: 0;
+    align-self: start;
+  }
+
+  .latest {
+    grid-area: latest;
+    order: 0;
+  }
+
+  .quick {
+    grid-area: quick;
+    order: 0;
+  }
+
+  .metric {
+    min-height: 85px;
+    padding: 12px 14px;
+  }
+
+  .metric__label {
+    font-size: 12px;
+  }
+
+  .metric__value {
+    font-size: 26px;
+  }
+
+  .metric__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .metric__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .latest__books {
+    gap: 16px 12px;
+  }
+
+  /* Enquanto a coluna esquerda é estreita, as ações ficam embaixo */
+  .latest__actions {
+    grid-template-columns: repeat(2, minmax(0, 140px));
+  }
+
+  .latest__card {
+    padding: 14px;
+  }
+
+  .quick__card {
+    padding: 18px 16px 14px;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .search {
+    flex-basis: 300px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  /* Coluna do gráfico é estreita: volta a empilhar donut e legenda */
+  .chart {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .donut {
+    width: min(70%, 175px);
+  }
+
+  .donut__value {
+    font-size: 27px;
+  }
+
+  .legend {
+    width: 100%;
+    max-width: none;
+  }
+
+  .legend__button {
+    padding: 4px 5px;
+    font-size: 11.5px;
+    gap: 7px;
+  }
+
+  .legend__value {
+    font-size: 10px;
+  }
+}
+
+/* ------------------------------------------------------------
+   16. DESKTOP LARGO (a partir de 1280px)
+   Ações ao lado dos livros, 5 colunas na pesquisa e gráfico
+   com legenda ao lado, como no print.
+   ------------------------------------------------------------ */
+@media (min-width: 1280px) {
+  .dashboard {
+    gap: 24px;
+  }
+
+  .latest__grid {
+    flex-wrap: nowrap;
+  }
+
+  .latest__books {
+    flex: 1 1 auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px 14px;
+  }
+
+  .latest__more {
+    display: inline-flex;
+    flex: 0 0 22px;
+  }
+
+  .latest__actions {
+    flex: 0 0 104px;
+    grid-template-columns: minmax(0, 1fr);
+    width: 104px;
+  }
+
+  .action {
+    flex-direction: column;
+    min-height: 62px;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 26px 16px;
+  }
+
+  .search {
+    flex-basis: 320px;
+  }
+
+  /* Gráfico lado a lado na coluna da direita */
+  .chart {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .donut {
+    flex: 0 0 158px;
+    width: 158px;
+  }
+
+  .donut__value {
+    font-size: 26px;
+  }
+
+  .legend {
+    min-width: 0;
+  }
+
+  .legend__button {
+    padding: 4px;
+    font-size: 10.8px;
+  }
+
+  .legend__value {
+    font-size: 9.8px;
+  }
+
+  .chart-card__title {
+    font-size: 17px;
+  }
+}
+
+/* ------------------------------------------------------------
+   17. AJUSTES FINOS PARA TELAS MUITO PEQUENAS (360px)
+   ------------------------------------------------------------ */
+@media (max-width: 359px) {
+  .topbar {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .topbar__greeting {
+    font-size: 16px;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .content {
+    padding-inline: 12px;
+  }
+
+  .metric__value {
+    font-size: 25px;
+  }
+
+  .quick__card {
+    padding-inline: 12px;
+  }
+
+  .book-grid {
+    gap: 18px 10px;
+  }
+}
+
+/* ------------------------------------------------------------
+   18. PREFERÊNCIA POR MENOS MOVIMENTO
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

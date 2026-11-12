@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sebo das Andorinhas — encontre seu próximo livro usado por um preço especial.">
+  <meta name="theme-color" content="#DD797E">
+  <title>Início | Sebo das Andorinhas</title>
+
+  <!-- Fontes oficiais do guia de design (Figtree, DM Sans e Poppins) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Figtree:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Folha de estilo da tela -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body id="topo">
+
+  <!-- Atalho de teclado para quem navega com leitor de tela / tabulação -->
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- ============================================================
+       TOPO / MARCA
+       Barra rosa fixa no fluxo da página com o logotipo do sebo.
+       O PNG é branco e transparente, por isso fica sobre o rosa.
+       ============================================================ -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="#topo" aria-label="Sebo das Andorinhas — voltar ao início">
+        <img
+          class="topbar__logo"
+          src="../../assets/header-inicio.png"
+          alt="Sebo das Andorinhas"
+          width="2048"
+          height="768"
+        >
+      </a>
+    </div>
+  </header>
+
+  <main class="page" id="conteudo">
+
+    <!-- ============================================================
+         HERO / BANNER "ACHADOS DO SEBO"
+         O fundo rosa é feito em CSS e a "montagem" de capas usa as
+         imagens reais de assets/. O gradiente escuro garante leitura.
+         ============================================================ -->
+    <section class="hero" aria-labelledby="hero-titulo">
+
+      <!-- Capas decorativas: ficam atrás do texto e não são lidas por leitores de tela -->
+      <div class="hero__collage" aria-hidden="true">
+        <img class="hero__img hero__img--1" src="../../assets/capa-4.png" alt="" width="365" height="547">
+        <img class="hero__img hero__img--2" src="../../assets/capa-1.png" alt="" width="333" height="500">
+        <img class="hero__img hero__img--3" src="../../assets/capa-2.png" alt="" width="365" height="547">
+        <img class="hero__img hero__img--4" src="../../assets/capa-5.png" alt="" width="357" height="560">
+        <img class="hero__img hero__img--5" src="../../assets/capa-dom-quixote.png" alt="" width="375" height="533">
+      </div>
+
+      <!-- Camada de sombra/gradiente para dar contraste ao texto branco -->
+      <div class="hero__shade" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <h2 class="hero__title" id="hero-titulo">Achados do Sebo</h2>
+        <p class="hero__text">Grandes achados por até R$ 20,00</p>
+        <a class="hero__button" href="#lista-livros">Explorar Achados</a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         INTRODUÇÃO + BUSCA + FILTROS
+         ============================================================ -->
+    <section class="intro" aria-labelledby="titulo-vitrine">
+      <h1 class="intro__title" id="titulo-vitrine">Qual será a sua próxima leitura?</h1>
+      <p class="intro__subtitle">Encontre um título ou descubra um novo achado!</p>
+
+      <!-- Formulário com label real (escondido visualmente) para acessibilidade -->
+      <form class="search" role="search" novalidate>
+        <label class="sr-only" for="busca">Buscar livros por título ou autor</label>
+        <span class="search__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-3.5-3.5"></path>
+          </svg>
+        </span>
+        <input
+          class="search__input"
+          id="busca"
+          type="search"
+          name="busca"
+          placeholder="Encontre pelo título ou autor"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </form>
+
+      <!-- Faixa de chips: rola na horizontal no celular e quebra linha no desktop -->
+      <div class="filtros">
+        <div class="chips" role="group" aria-label="Filtrar livros por categoria">
+          <button class="chip chip--todos is-active" type="button" data-categoria="Todos" aria-pressed="true">Todos</button>
+          <button class="chip chip--literatura" type="button" data-categoria="Literatura" aria-pressed="false">Literatura</button>
+          <button class="chip chip--ficcao" type="button" data-categoria="Ficção" aria-pressed="false">Ficção</button>
+          <button class="chip chip--infantil" type="button" data-categoria="Infantil" aria-pressed="false">Infantil</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         LISTA DE LIVROS
+         Os cards são criados pelo JavaScript a partir do array
+         "livros" em script.js.
+         ============================================================ -->
+    <section class="catalogo" id="lista-livros" aria-labelledby="titulo-catalogo">
+      <h2 class="sr-only" id="titulo-catalogo">Livros do acervo</h2>
+
+      <!-- Região viva: o leitor de tela anuncia quantos livros apareceram -->
+      <p class="sr-only" id="resultado-busca" role="status" aria-live="polite"></p>
+
+      <div class="book-grid" id="lista"></div>
+
+      <!-- Estado vazio exibido quando nenhum livro corresponde aos filtros -->
+      <div class="empty" id="vazio" hidden>
+        <span class="empty__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h9a3 3 0 0 1 3 3v15H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path>
+            <path d="M6 17h12"></path>
+            <path d="M9 7h5"></path>
+          </svg>
+        </span>
+        <h3 class="empty__title" id="vazio-titulo">Nenhum livro encontrado.</h3>
+        <p class="empty__text" id="vazio-texto">Tente outro título, autor ou categoria.</p>
+        <button class="empty__button" id="limpar-filtros" type="button">Limpar filtros</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       NAVEGAÇÃO INFERIOR FIXA
+       Quatro itens com ícones SVG inline (sem CDN).
+       O item ativo ganha uma "pílula" branca.
+       ============================================================ -->
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="bottom-nav__item is-active" type="button" data-nav="inicio" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3.5 10.5 12 3.5l8.5 7"></path>
+        <path d="M5.5 9.5v10h13v-10"></path>
+        <path d="M9.5 19.5v-6h5v6"></path>
+      </svg>
+      <span class="bottom-nav__label">Início</span>
+    </button>
+
+    <button class="bottom-nav__item" type="button" data-nav="livros">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 6.5c-1.6-1.4-3.7-2-6.5-2v14c2.8 0 4.9.6 6.5 2 1.6-1.4 3.7-2 6.5-2v-14c-2.8 0-4.9.6-6.5 2Z"></path>
+        <path d="M12 6.5v14"></path>
+      </svg>
+      <span class="bottom-nav__label">Livros</span>
+    </button>
+
+    <button class="bottom-nav__item" type="button" data-nav="favoritos">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6.5 4.5h11v15l-5.5-3.7-5.5 3.7v-15Z"></path>
+      </svg>
+      <span class="bottom-nav__label">Favoritos</span>
+    </button>
+
+    <button class="bottom-nav__item" type="button" data-nav="perfil">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="8" r="3.5"></circle>
+        <path d="M5 20c.7-3.5 3.5-5.5 7-5.5s6.3 2 7 5.5"></path>
+      </svg>
+      <span class="bottom-nav__label">Perfil</span>
+    </button>
+  </nav>
+
+  <!-- Aviso rápido e acessível usado pelos itens da navegação -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Mensagem para quem estiver com JavaScript desativado -->
+  <noscript>
+    <p class="noscript">Ative o JavaScript para carregar a lista de livros e usar os filtros.</p>
+  </noscript>
+
+  <!-- Script da tela (dados mockados, sem API) -->
+  <script src="script.js"></script>
+</body>
+</html>

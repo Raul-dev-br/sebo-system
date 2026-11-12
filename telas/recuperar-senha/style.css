@@ -1,0 +1,578 @@
+/* ============================================================
+   Sebo das Andorinhas — Tela de recuperação de senha
+   Abordagem mobile-first: começa no layout de 390px e vai
+   ganhando ajustes com @media (min-width: ...).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. TOKENS DE DESIGN
+   As variáveis ficam no :root para poderem ser reutilizadas
+   em qualquer seletor. Os valores vêm do guia-de-design.md.
+   ------------------------------------------------------------ */
+:root {
+  /* Cores da paleta oficial */
+  --cream-bg: #FAF7F2;        /* fundo claro das telas de entrada */
+  --cream-bg-alt: #F9F6F0;    /* fundo desta tela (esqueceu senha) */
+  --white: #FFFFFF;
+  --wine: #AE525B;            /* cor principal (botões, seta) */
+  --wine-light: #DD797E;
+  --rose-soft: #EEC4C3;
+  --rose-pale: #FFE0E5;
+  --green-soft: #D8FEE4;
+  --green-text: #7C9A73;
+  --dark: #1A0001;            /* texto principal */
+  --gray-text: #4D4D4D;       /* texto secundário */
+  --border: #D8D8D8;
+  --surface: #F4F4F4;
+  --amber-soft: #FFF4E0;
+
+  /* Tom derivado para a borda do input: um cinza quente,
+     mais próximo do render do Figma do que o --border puro. */
+  --input-border: #B7A6A0;
+
+  /* Tipografia */
+  --font-title: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-body: "DM Sans", "Segoe UI", system-ui, sans-serif;
+
+  /* Medidas reaproveitadas */
+  --radius-field: 12px;
+  --radius-button: 12px;
+  --control-height: 48px;     /* altura do input e dos botões (frame 48px) */
+}
+
+/* ------------------------------------------------------------
+   2. RESET LEVE
+   Remove margens padrão e faz padding/border entrarem na
+   largura total dos elementos (box-sizing).
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------------------------------------
+   3. PÁGINA
+   O body recebe um fundo creme e dois brilhos suaves que só
+   aparecem quando o card não ocupa a tela inteira (tablet/desktop).
+   ------------------------------------------------------------ */
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  color: var(--dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+
+  background-color: var(--cream-bg);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(238, 196, 195, 0.45), transparent 42%),
+    radial-gradient(circle at 88% 82%, rgba(255, 224, 229, 0.55), transparent 46%);
+}
+
+/* ------------------------------------------------------------
+   4. CONTAINER PRINCIPAL
+   No mobile ele ocupa 100% da largura e a altura toda,
+   como no frame de 390 × 844px.
+   ------------------------------------------------------------ */
+.auth {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+
+  background-color: var(--cream-bg-alt);
+  overflow: hidden; /* os cantos arredondados do card cortam a imagem */
+}
+
+/* ------------------------------------------------------------
+   5. ILUSTRAÇÃO
+   A imagem original tem 1024 × 1536 (proporção 2:3), mas o
+   Figma mostra apenas a parte de cima (o recorte termina antes
+   dos tênis). Por isso usamos "cover" + "object-position: top".
+   A proporção 390/480 reproduz a área visível no render.
+   ------------------------------------------------------------ */
+.illustration {
+  position: relative;
+  flex: none;
+  width: 100%;
+  aspect-ratio: 390 / 480;
+  overflow: hidden;
+  background-color: #FAF7F1; /* mesma cor de fundo da ilustração */
+}
+
+.illustration__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* ------------------------------------------------------------
+   6. BOTÃO DE VOLTAR
+   Círculo vinho sobre a ilustração, no canto superior esquerdo.
+   É um <a> porque navega para outra tela.
+   ------------------------------------------------------------ */
+.back-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+
+  color: var(--white);
+  background-color: var(--wine);
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(26, 0, 1, 0.18);
+
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.back-link svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Estados de interação do botão de voltar */
+.back-link:hover {
+  background-color: #9A454F;
+  transform: translateY(-1px);
+}
+
+.back-link:active {
+  transform: scale(0.96);
+}
+
+/* Foco bem visível: anel branco para contrastar com o vinho */
+.back-link:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   7. PAINEL DO FORMULÁRIO
+   O painel sobe 56px por cima da ilustração. O border-radius
+   no topo é largo (50% na horizontal) para criar a curva suave
+   vista no Figma. O fundo é o creme da tela, então a emenda
+   com a ilustração fica discreta.
+   ------------------------------------------------------------ */
+.panel {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+
+  margin-top: -56px;
+  padding: 58px 18px 40px;
+
+  background-color: var(--cream-bg-alt);
+  border-radius: 50% 50% 0 0 / 54px 54px 0 0;
+  box-shadow: 0 -10px 30px rgba(26, 0, 1, 0.03);
+}
+
+/* Limita a largura do conteúdo para o texto não ficar largo demais
+   em tablets e centraliza o bloco. */
+.panel__content {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------
+   8. TÍTULO E SUBTÍTULO
+   Medidas exatas do guia: H1 28px Figtree 700 e subtítulo
+   16px DM Sans 500.
+   ------------------------------------------------------------ */
+.panel__header {
+  text-align: center;
+}
+
+.panel__header h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-title);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.3px;
+  color: var(--dark);
+}
+
+.subtitle {
+  max-width: 320px;
+  margin: 0 auto 20px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--gray-text);
+}
+
+/* ------------------------------------------------------------
+   9. FORMULÁRIO E CAMPO DE EMAIL
+   ------------------------------------------------------------ */
+.recover-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label real, 12px DM Sans 500, conforme o guia */
+.field-group label {
+  margin-bottom: 7px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--dark);
+}
+
+/* Casca que desenha a borda e organiza ícone + input lado a lado */
+.input-shell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 16px;
+
+  background-color: var(--white);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-field);
+
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Ícone de envelope */
+.input-shell__icon {
+  flex: none;
+  width: 21px;
+  height: 21px;
+  color: #8B7F7B;
+}
+
+/* O input em si não tem borda: quem desenha é a .input-shell */
+.input-shell input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.input-shell input::placeholder {
+  color: #8C8C8C;
+  opacity: 1;
+}
+
+/* Foco do conjunto: anel vinho suave na casca inteira.
+   Esse é o indicador visual de foco do input. */
+.input-shell:focus-within {
+  border-color: var(--wine);
+  box-shadow: 0 0 0 4px rgba(174, 82, 91, 0.14);
+}
+
+/* Estado de erro: borda vinho mais escura + anel avermelhado */
+.input-shell.is-invalid {
+  border-color: #9A3F48;
+  box-shadow: 0 0 0 4px rgba(154, 63, 72, 0.14);
+}
+
+/* ------------------------------------------------------------
+   10. MENSAGEM DE FEEDBACK (sucesso/erro)
+   Fica com o atributo hidden até o JS preencher o texto.
+   ------------------------------------------------------------ */
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  margin: 12px 0 0;
+  padding: 9px 11px;
+
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--dark);
+
+  background-color: var(--green-soft);
+  border: 1px solid rgba(124, 154, 115, 0.45);
+  border-radius: 10px;
+}
+
+/* O atributo hidden precisa vencer o display:flex acima */
+.feedback[hidden] {
+  display: none;
+}
+
+/* Ícone de check do sucesso */
+.feedback__icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: #3F5E3A;
+}
+
+/* Variante de erro: fundo rosa claro e texto vinho escuro */
+.feedback[data-state="error"] {
+  color: #7A2E36;
+  background-color: var(--rose-pale);
+  border-color: rgba(174, 82, 91, 0.45);
+}
+
+/* No erro escondemos o check para não confundir a leitura */
+.feedback[data-state="error"] .feedback__icon {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   11. BOTÕES
+   Ambos têm 48px de altura e 12px de raio, seguindo o guia.
+   ------------------------------------------------------------ */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 12px 20px;
+
+  border: 0;
+  border-radius: var(--radius-button);
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+              color 0.18s ease, transform 0.12s ease;
+}
+
+/* Botão primário vinho */
+.btn--primary {
+  margin-top: 18px;
+  color: var(--white);
+  background-color: var(--wine);
+  box-shadow: 0 8px 18px rgba(174, 82, 91, 0.18);
+}
+
+.btn--primary:hover {
+  background-color: #9A454F;
+}
+
+.btn--primary:active {
+  transform: scale(0.985);
+}
+
+/* Botão secundário: contorno vinho e fundo transparente */
+.btn--secondary {
+  margin-top: 12px;
+  color: var(--wine);
+  background-color: transparent;
+  border: 1.5px solid rgba(174, 82, 91, 0.55);
+}
+
+.btn--secondary:hover {
+  background-color: var(--rose-pale);
+  border-color: var(--wine);
+}
+
+.btn--secondary:active {
+  transform: scale(0.985);
+}
+
+/* Foco visível e consistente nos dois botões */
+.btn:focus-visible {
+  outline: 3px solid rgba(174, 82, 91, 0.55);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   12. AJUSTES PARA TELAS MUITO ESTREITAS (ex.: 320–359px)
+   ------------------------------------------------------------ */
+@media (max-width: 359px) {
+  .panel {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .panel__header h1 {
+    font-size: 26px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+  }
+}
+
+/* ------------------------------------------------------------
+   13. TABLET (a partir de 600px)
+   Aqui a tela deixa de ser "sangrada" e vira um card centralizado,
+   com cantos arredondados e sombra discreta.
+   ------------------------------------------------------------ */
+@media (min-width: 600px) {
+  body {
+    padding: 24px;
+  }
+
+  .auth {
+    min-height: calc(100vh - 48px);
+    min-height: calc(100dvh - 48px);
+    border-radius: 28px;
+    box-shadow: 0 28px 70px rgba(26, 0, 1, 0.12);
+  }
+
+  .back-link {
+    top: 24px;
+    left: 24px;
+  }
+
+  .panel {
+    padding-left: 28px;
+    padding-right: 28px;
+    padding-bottom: 48px;
+  }
+}
+
+/* ------------------------------------------------------------
+   14. DESKTOP (a partir de 900px)
+   Layout em duas colunas: ilustração à esquerda e formulário
+   à direita, ambos dentro de um card maior.
+   ------------------------------------------------------------ */
+@media (min-width: 900px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+
+  .auth {
+    display: grid;
+    grid-template-columns: 1.04fr 0.96fr;
+    align-items: stretch;
+
+    width: 100%;
+    max-width: 1160px;
+    min-height: 680px;
+    margin: 0;
+
+    border-radius: 32px;
+  }
+
+  /* A ilustração passa a ocupar toda a altura da coluna esquerda */
+  .illustration {
+    height: 100%;
+    min-height: 680px;
+    aspect-ratio: auto;
+  }
+
+  .illustration__img {
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .back-link {
+    top: 28px;
+    left: 28px;
+    width: 54px;
+    height: 54px;
+  }
+
+  /* No desktop o painel não precisa mais invadir a imagem */
+  .panel {
+    display: flex;
+    align-items: center;
+    margin-top: 0;
+    padding: 56px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .panel__content {
+    max-width: 380px;
+  }
+
+  /* Um respiro maior entre título e formulário no desktop */
+  .subtitle {
+    margin-bottom: 26px;
+  }
+}
+
+/* ------------------------------------------------------------
+   15. TELAS GRANDES (a partir de 1200px)
+   Só aumentamos a altura e o padding para o card não parecer
+   pequeno em monitores grandes.
+   ------------------------------------------------------------ */
+@media (min-width: 1200px) {
+  .auth {
+    min-height: 720px;
+  }
+
+  .illustration {
+    min-height: 720px;
+  }
+
+  .panel {
+    padding: 64px 72px;
+  }
+
+  .panel__content {
+    max-width: 400px;
+  }
+}
+
+/* ------------------------------------------------------------
+   16. ACESSIBILIDADE: MOVIMENTO REDUZIDO
+   Quem configurou o sistema para reduzir animações não recebe
+   transições nem transformações.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

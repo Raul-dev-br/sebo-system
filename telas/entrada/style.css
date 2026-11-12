@@ -1,0 +1,312 @@
+/* ==========================================================================
+   SEBO DAS ANDORINHAS — TELA DE ENTRADA (WELCOME)
+   Mobile-first: começa no layout de 390px e cresce com media queries.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Variáveis de design (paleta e fontes do guia-de-design.md)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Cores da marca */
+  --cream-bg: #FAF7F2;      /* fundo creme das telas de entrada */
+  --cream-bg-alt: #F9F6F0;  /* variação do creme */
+  --white: #FFFFFF;         /* superfícies brancas */
+  --wine: #AE525B;          /* cor principal (botão primário) */
+  --wine-light: #DD797E;    /* hover / acentos suaves */
+  --rose-soft: #EEC4C3;     /* botão secundário / detalhe decorativo */
+  --rose-pale: #FFE0E5;     /* badges rosas */
+  --green-soft: #D8FEE4;    /* badge "Disponível" */
+  --green-text: #7C9A73;    /* texto do badge "Disponível" */
+  --dark: #1A0001;          /* texto principal */
+  --gray-text: #4D4D4D;     /* texto secundário */
+  --border: #D8D8D8;        /* bordas de cards e inputs */
+  --surface: #F4F4F4;       /* fundo de seções / placeholders */
+  --amber-soft: #FFF4E0;    /* badge "Achados" */
+
+  /* Famílias tipográficas (carregadas no index.html) */
+  --fonte-titulo: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --fonte-texto: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --fonte-badge: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Medidas reutilizadas */
+  --raio-botao: 10px;
+  --altura-botao: 48px;
+  --espaco-lateral: 20px;
+
+  /* Sombra suave do botão primário */
+  --sombra-botao: 0 6px 16px rgba(174, 82, 91, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset básico
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* largura total inclui padding e borda */
+}
+
+html {
+  /* Evita zoom automático de fonte no mobile ao girar a tela */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;          /* fallback para navegadores antigos */
+  min-height: 100dvh;         /* altura real visível no mobile */
+  background-color: var(--cream-bg);
+  color: var(--dark);
+  font-family: var(--fonte-texto);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;         /* nenhum elemento deve criar rolagem lateral */
+}
+
+/* Imagens nunca ultrapassam o contêiner */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   3. Estrutura geral da tela (mobile)
+   -------------------------------------------------------------------------- */
+.tela {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;   /* fallback */
+  min-height: 100dvh;  /* ocupa a altura toda do aparelho */
+  background-color: var(--cream-bg);
+}
+
+/* --------------------------------------------------------------------------
+   4. Ilustração do topo
+   A imagem ocupa todo o espaço restante acima do texto e é recortada com
+   object-fit: cover para não distorcer em telas de alturas diferentes.
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  flex: 1 1 auto;       /* cresce para preencher o topo da tela */
+  width: 100%;
+  min-height: 300px;    /* garante que a ilustração nunca suma em telas baixas */
+  margin: 0;
+  overflow: hidden;
+  background-color: #FAF7F0; /* tom médio do fundo da própria ilustração */
+}
+
+.hero__imagem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Mantém a mulher e os livros no enquadramento quando há recorte */
+  object-position: center 52%;
+}
+
+/* --------------------------------------------------------------------------
+   5. Bloco de conteúdo (título + botões)
+   O padding inferior é fluido: 59px no frame de 390×844 e menor em telas baixas.
+   -------------------------------------------------------------------------- */
+.conteudo {
+  flex: 0 0 auto;      /* mantém a altura do conteúdo, sem encolher */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--espaco-lateral) clamp(26px, 7dvh, 59px);
+  background-color: var(--cream-bg);
+  text-align: center;
+}
+
+/* Título principal: duas linhas fixas, 28px Figtree 700 */
+.conteudo__titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 40px;          /* 40px de altura de linha como no Figma */
+  letter-spacing: -0.01em;
+  color: var(--dark);
+}
+
+/* Cada linha do título é um bloco, garantindo a quebra exata do design */
+.conteudo__linha {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   6. Botões
+   -------------------------------------------------------------------------- */
+.acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;                    /* espaço entre os dois botões */
+  width: 100%;
+  max-width: 420px;             /* não deixa os botões largos demais no tablet */
+  margin-top: 12px;             /* distância entre título e primeiro botão */
+}
+
+/* Estilo base compartilhado pelos dois botões */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--altura-botao);
+  padding: 0 20px;
+  border: 1.5px solid transparent;
+  border-radius: var(--raio-botao);
+  font-family: var(--fonte-texto);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Botão primário: vinho com texto branco */
+.botao--primario {
+  background-color: var(--wine);
+  color: var(--white);
+  box-shadow: var(--sombra-botao);
+}
+
+/* Escurece levemente o vinho no hover para manter o contraste do texto branco */
+.botao--primario:hover {
+  background-color: #9C4750;
+}
+
+/* Botão secundário: rosa suave preenchido, conforme o render do Figma */
+.botao--secundario {
+  background-color: var(--rose-soft);
+  color: var(--dark);
+  border-color: var(--rose-soft);
+}
+
+/* No hover o rosa ganha um tom um pouco mais fechado */
+.botao--secundario:hover {
+  background-color: #E5B6B5;
+  border-color: #E5B6B5;
+}
+
+/* Feedback de clique: afunda 1px */
+.botao:active {
+  transform: translateY(1px);
+}
+
+/* Foco de teclado sempre visível e com bom contraste nos dois botões */
+.botao:focus-visible {
+  outline: 3px solid var(--dark);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Animação de entrada (respeita quem prefere menos movimento)
+   -------------------------------------------------------------------------- */
+.hero__imagem {
+  animation: surgir 0.7s ease-out both;
+}
+
+.conteudo__titulo {
+  animation: subir 0.6s 0.12s ease-out both;
+}
+
+.acoes {
+  animation: subir 0.6s 0.22s ease-out both;
+}
+
+@keyframes surgir {
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Transição de saída aplicada pelo script.js antes de navegar */
+body.saindo .tela {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* --------------------------------------------------------------------------
+   8. Tablet e desktop (a partir de 700px)
+   A composição vira duas colunas: ilustração à esquerda e conteúdo à direita.
+   -------------------------------------------------------------------------- */
+@media (min-width: 700px) {
+  .tela {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* A ilustração passa a ocupar toda a altura da coluna esquerda */
+  .hero {
+    height: 100%;
+    min-height: 100dvh;
+    flex: none;
+  }
+
+  /* Reenquadra a ilustração para o formato vertical da coluna */
+  .hero__imagem {
+    object-position: center 52%;
+  }
+
+  /* Conteúdo centralizado verticalmente na coluna direita */
+  .conteudo {
+    justify-content: center;
+    padding: 56px clamp(28px, 4.5vw, 88px);
+    border-left: 1px solid rgba(174, 82, 91, 0.08);
+  }
+
+  /* Botões e título alinhados no centro da coluna */
+  .acoes {
+    margin-top: 20px;
+    max-width: 380px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. Telas muito largas (1440px+)
+   Mantém o texto em uma largura confortável de leitura.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1200px) {
+  .tela {
+    /* 42/58 aproxima a coluna da ilustração da proporção original 2:3,
+       evitando cortes grandes na arte em telas largas */
+    grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+  }
+
+  .conteudo__titulo {
+    line-height: 42px;
+  }
+
+  .acoes {
+    margin-top: 24px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Preferência por menos movimento
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
